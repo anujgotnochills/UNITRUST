@@ -12,7 +12,7 @@ import toast from 'react-hot-toast';
 export default function RoleSelectPage() {
   const router = useRouter();
   const { isConnected, address } = useAccount();
-  const { setRole } = useRoleStore();
+  const setRoleStore = useRoleStore((state) => state.setRole);
   const [checking, setChecking] = useState(false);
 
   const handleSelect = async (role: 'user' | 'institute') => {
@@ -39,7 +39,7 @@ export default function RoleSelectPage() {
         } catch { /* all good */ }
       }
 
-      setRole(role);
+      setRoleStore(address, role);
       router.push(role === 'user' ? ROUTES.USER_SETUP : ROUTES.INSTITUTE_SETUP);
     } catch {
       toast.error('An error occurred while verifying the role');

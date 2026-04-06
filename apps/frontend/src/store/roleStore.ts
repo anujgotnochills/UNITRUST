@@ -4,18 +4,16 @@ import { persist } from 'zustand/middleware';
 type Role = 'user' | 'institute' | null;
 
 interface RoleState {
-  role: Role;
-  setRole: (role: Role) => void;
-  clearRole: () => void;
+  roles: Record<string, 'user' | 'institute'>;
+  setRole: (address: string, role: 'user' | 'institute') => void;
 }
 
 export const useRoleStore = create<RoleState>()(
   persist(
     (set) => ({
-      role: null,
-      setRole: (role) => set({ role }),
-      clearRole: () => set({ role: null }),
+      roles: {},
+      setRole: (address, role) => set((state) => ({ roles: { ...state.roles, [address]: role } })),
     }),
-    { name: 'unitrust-role' }
+    { name: 'unitrust-roles' }
   )
 );

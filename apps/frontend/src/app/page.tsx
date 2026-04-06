@@ -5,12 +5,43 @@ import { useAccount } from 'wagmi';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useRoleStore } from '@/store/roleStore';
 import { ROUTES } from '@/lib/constants';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { profileService } from '@/services/profileService';
 
 export default function HomePage() {
   const router = useRouter();
-  const { isConnected } = useAccount();
-  const { role, setRole } = useRoleStore();
+  const { isConnected, address } = useAccount();
+  const roles = useRoleStore((state) => state.roles);
+  const setRoleStore = useRoleStore((state) => state.setRole);
+  const role = address ? roles[address] : null;
+  const [isCheckingProfile, setIsCheckingProfile] = useState(false);
+
+  useEffect(() => {
+    if (isConnected && !role && address) {
+      const checkProfile = async () => {
+        setIsCheckingProfile(true);
+        try {
+          await profileService.getUserProfile(address);
+          setRoleStore(address, 'user');
+          return;
+        } catch (e) {
+          // Not a user
+        }
+        
+        try {
+          await profileService.getInstituteProfile(address);
+          setRoleStore(address, 'institute');
+          return;
+        } catch (e) {
+          // Not an institute neither
+        }
+        
+        setIsCheckingProfile(false);
+      };
+      
+      checkProfile();
+    }
+  }, [isConnected, role, address, setRoleStore]);
 
   useEffect(() => {
     if (isConnected && role === 'user') {
@@ -21,7 +52,9 @@ export default function HomePage() {
   }, [isConnected, role, router]);
 
   const handleRoleSelect = (selectedRole: 'user' | 'institute') => {
-    setRole(selectedRole);
+    if (address) {
+      setRoleStore(address, selectedRole);
+    }
     if (isConnected) {
       router.push(selectedRole === 'user' ? ROUTES.USER_SETUP : ROUTES.INSTITUTE_SETUP);
     }
@@ -48,6 +81,12 @@ export default function HomePage() {
             Connect your wallet to get started
           </p>
           <ConnectButton />
+        </div>
+      ) : isCheckingProfile ? (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', marginTop: '2rem' }}>
+          <div className="spinner" style={{ width: '40px', height: '40px', border: '3px solid rgba(0,0,0,0.1)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+          <p style={{ color: 'var(--text-muted)', fontWeight: 500 }}>Resolving identity...</p>
+          <style>{`@keyframes spin { 100% { transform: rotate(360deg); } }`}</style>
         </div>
       ) : !role ? (
         <div style={{ width: '100%', maxWidth: '640px' }}>

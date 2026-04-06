@@ -9,22 +9,22 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export function Navbar() {
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
   const { disconnect } = useDisconnect();
-  const { role, clearRole } = useRoleStore();
+  const roles = useRoleStore((state) => state.roles);
   const router = useRouter();
 
-  // Watch for disconnect to fully reset state and redirect
+  const role = address ? roles[address] : null;
+
+  // Watch for disconnect to redirect
   useEffect(() => {
-    if (!isConnected && role) {
-      clearRole();
+    if (!isConnected) {
       router.push(ROUTES.HOME);
     }
-  }, [isConnected, role, clearRole, router]);
+  }, [isConnected, router]);
 
   const handleLogout = () => {
     disconnect();
-    clearRole();
     router.push(ROUTES.HOME);
   };
 
