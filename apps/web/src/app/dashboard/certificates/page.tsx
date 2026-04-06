@@ -121,9 +121,7 @@ export default function MyCertificatesPage() {
           <div className="max-w-xs mx-auto space-y-4">
             <p className="text-5xl">🎓</p>
             <p className="text-muted text-lg font-medium">No certificates yet.</p>
-            <Link href="/dashboard/requests/new" className="text-accent-pink font-bold hover:underline block">
-              Request certification →
-            </Link>
+            <p className="text-muted text-sm">Certificates will appear here once an institute issues one to your wallet.</p>
           </div>
         </div>
 
