@@ -71,7 +71,7 @@ export function QRScanner({
           margin: '0 auto',
           borderRadius: 'var(--radius-lg)',
           overflow: 'hidden',
-          background: 'var(--surface-2)',
+          background: 'var(--bg-tertiary)',
           minHeight: scanning ? 'auto' : '200px',
           display: 'flex',
           alignItems: 'center',

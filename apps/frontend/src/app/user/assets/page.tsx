@@ -216,7 +216,7 @@ export default function UserAssetsPage() {
                       style={{
                         width: '100%',
                         aspectRatio: '4/3',
-                        background: imageUrl ? `url(${imageUrl}) center/cover` : 'var(--surface-2)',
+                        background: imageUrl ? `url(${imageUrl}) center/cover` : 'var(--bg-tertiary)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
