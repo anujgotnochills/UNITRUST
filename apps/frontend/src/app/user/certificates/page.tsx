@@ -32,7 +32,7 @@ export default function UserCertificatesPage() {
       ]);
 
       const allReqs = reqRes.requests || [];
-      const pending = allReqs.filter((r: any) => r.status === 'pending');
+      const pending = allReqs.filter((r: any) => ['pending', 'accepted'].includes(r.status));
       setAllRequests(allReqs);
       setPendingRequests(pending);
       setCertificates(certRes.certificates || []);
@@ -125,12 +125,12 @@ export default function UserCertificatesPage() {
               return (
                 <div key={req._id} className="card pending-card">
                   <div className="cert-card-header">
-                    <div className="cert-card-logo" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', background: 'var(--surface-2)' }}>
+                    <div className="cert-card-logo" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', background: 'var(--bg-tertiary)' }}>
                       {inst?.logo ? <img src={inst.logo} alt="" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} /> : '🏫'}
                     </div>
                     <div>
                       <div className="cert-card-institute">{inst?.instituteName || 'Institute'}</div>
-                      <RequestStatusBadge status="pending" />
+                      <RequestStatusBadge status={req.status} />
                     </div>
                   </div>
                   <h3 className="cert-card-title">{req.certificateDetails?.title}</h3>
@@ -148,14 +148,20 @@ export default function UserCertificatesPage() {
                       📄 Download PDF
                     </a>
                   )}
-                  <div style={{ display: 'flex', gap: '0.75rem' }}>
-                    <button className="btn btn-success" style={{ flex: 1 }} onClick={() => handleAccept(req._id)}>
-                      ✓ Accept
-                    </button>
-                    <button className="btn btn-danger" style={{ flex: 1 }} onClick={() => handleReject(req._id)}>
-                      ✕ Reject
-                    </button>
-                  </div>
+                  {req.status === 'pending' ? (
+                    <div style={{ display: 'flex', gap: '0.75rem' }}>
+                      <button className="btn btn-success" style={{ flex: 1 }} onClick={() => handleAccept(req._id)}>
+                        ✓ Accept
+                      </button>
+                      <button className="btn btn-danger" style={{ flex: 1 }} onClick={() => handleReject(req._id)}>
+                        ✕ Reject
+                      </button>
+                    </div>
+                  ) : req.status === 'accepted' ? (
+                    <div style={{ padding: '0.75rem', background: 'rgba(16,185,129,0.1)', border: '1px dashed rgba(16,185,129,0.4)', borderRadius: 'var(--radius-sm)', fontSize: '0.85rem', color: 'var(--success)', textAlign: 'center', fontWeight: 600 }}>
+                      ✅ Request Accepted<br/><span style={{ fontSize: '0.75rem', fontWeight: 400, opacity: 0.8 }}>Waiting for institute to issue the NFT</span>
+                    </div>
+                  ) : null}
                 </div>
               );
             })}
@@ -174,7 +180,7 @@ export default function UserCertificatesPage() {
                     👁‍🗨
                   </button>
                   <div className="cert-card-header">
-                    <div className="cert-card-logo" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', background: 'var(--surface-2)' }}>
+                    <div className="cert-card-logo" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', background: 'var(--bg-tertiary)' }}>
                       {inst?.logo ? <img src={inst.logo} alt="" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} /> : '🏫'}
                     </div>
                     <div className="cert-card-institute">{inst?.instituteName || 'Institute'}</div>
