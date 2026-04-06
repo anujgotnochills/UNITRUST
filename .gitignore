@@ -10,10 +10,10 @@ artifacts
 cache
 typechain-types
 
-# Env
-.env
-.env.local
-.env.*.local
+# Env (temporarily allowing for dev — remove secrets before making repo public)
+# .env
+# .env.local
+# .env.*.local
 
 # IDE
 .vscode
