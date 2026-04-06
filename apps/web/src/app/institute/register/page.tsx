@@ -7,7 +7,7 @@ import { useRoleStore } from '@/store/roleStore';
 import { profileService } from '@/services/profileService';
 import { ipfsService } from '@/services/ipfsService';
 import toast from 'react-hot-toast';
-import { Building2, Upload, Loader2, ArrowRight } from 'lucide-react';
+import { Building2, Upload, Loader2, ArrowRight, KeyRound, Eye, EyeOff } from 'lucide-react';
 import Image from 'next/image';
 
 export default function InstituteRegisterPage() {
@@ -16,10 +16,15 @@ export default function InstituteRegisterPage() {
   const { role } = useRoleStore();
   
   const [instituteName, setInstituteName] = useState('');
+  const [secretKey, setSecretKey] = useState('');
+  const [showKey, setShowKey] = useState(false);
+  const [keyError, setKeyError] = useState(false);
   const [logoUrl, setLogoUrl] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mounted, setMounted] = useState(false);
+
+  const INSTITUTE_SECRET = 'unitrust123';
 
   useEffect(() => {
     setMounted(true);
@@ -54,6 +59,14 @@ export default function InstituteRegisterPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!address) return;
+
+    // Validate secret key
+    if (secretKey !== INSTITUTE_SECRET) {
+      setKeyError(true);
+      toast.error('Invalid institute secret key!');
+      return;
+    }
+    setKeyError(false);
 
     setIsSubmitting(true);
     try {
@@ -110,6 +123,39 @@ export default function InstituteRegisterPage() {
             />
           </div>
 
+          {/* Secret Key */}
+          <div className="space-y-2">
+            <label className="block text-sm font-bold text-[#1A1A1A] uppercase tracking-widest px-1 flex items-center gap-2">
+              <KeyRound className="w-4 h-4 inline-block" />
+              Institute Secret Key
+            </label>
+            <div className="relative">
+              <input
+                required
+                type={showKey ? 'text' : 'password'}
+                value={secretKey}
+                onChange={(e) => { setSecretKey(e.target.value); setKeyError(false); }}
+                placeholder="Enter secret key to register"
+                className={`w-full px-5 py-4 pr-12 rounded-2xl border focus:ring-4 outline-none transition-all font-medium font-mono ${
+                  keyError
+                    ? 'border-red-400 focus:ring-red-400/20 bg-red-50'
+                    : 'border-black/10 focus:ring-accent-pink/20'
+                }`}
+              />
+              <button
+                type="button"
+                onClick={() => setShowKey((v) => !v)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-muted hover:text-[#1A1A1A] transition-colors"
+              >
+                {showKey ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
+            </div>
+            {keyError && (
+              <p className="text-xs text-red-500 font-bold px-1">❌ Incorrect secret key. Contact UniTrust admin.</p>
+            )}
+            <p className="text-xs text-muted px-1">Contact the UniTrust admin to get the institute registration key.</p>
+          </div>
+
           <div className="space-y-2">
             <label className="block text-sm font-bold text-[#1A1A1A] uppercase tracking-widest px-1">
               Institute Logo
@@ -151,7 +197,7 @@ export default function InstituteRegisterPage() {
 
           <button
             type="submit"
-            disabled={isSubmitting || !instituteName}
+            disabled={isSubmitting || !instituteName || !secretKey}
             className="w-full py-5 bg-[#1A1A1A] text-white rounded-full font-black text-lg hover:bg-black transition-all active:scale-[0.98] shadow-lg disabled:opacity-50 flex items-center justify-center gap-2 group"
           >
             {isSubmitting ? (
