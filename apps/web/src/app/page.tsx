@@ -1,4 +1,3 @@
-import { AnnouncementBar } from '@/components/layout/AnnouncementBar';
 import { Navbar } from '@/components/layout/Navbar';
 import { FloatingSidebar } from '@/components/layout/FloatingSidebar';
 import { Footer } from '@/components/layout/Footer';
@@ -12,7 +11,6 @@ import { Community } from '@/components/sections/Community';
 export default function Home() {
   return (
     <>
-      <AnnouncementBar />
       <Navbar />
       <FloatingSidebar />
       <main>
