@@ -29,7 +29,7 @@ function getAttr(attrs: any[], key: string) {
 // ─── Status badge config ──────────────────────────────────────────
 const STATUS_CONFIG: Record<string, { label: string; bg: string; text: string; icon: any }> = {
   accepted: {
-    label: 'Approved • Minting Soon',
+    label: 'Awaiting Issuance',
     bg: 'bg-blue-100',
     text: 'text-blue-700',
     icon: Clock,
@@ -192,7 +192,7 @@ export default function MyCertificatesPage() {
             return (
               <div key={`req-${req._id}`} className="group perspective-1000 hover:z-10 h-full">
                 <div className="relative w-full h-full preserve-3d transition-transform duration-700 will-change-transform group-hover:rotate-y-180">
-                  
+
                   {/* FRONT SIDE */}
                   <div className="relative backface-hidden shining-card bg-surface rounded-[24px] border border-black/[0.05] shadow-sm flex flex-col overflow-hidden h-full">
                     {/* Top colour bar */}
@@ -250,19 +250,17 @@ export default function MyCertificatesPage() {
 
                       {/* Carbon */}
                       {carbonScore !== '—' && (
-                        <div className={`flex items-center justify-between p-3 rounded-xl text-sm ${
-                          sustainTag === 'Green' ? 'bg-green-50 border border-green-200' :
-                          sustainTag === 'Neutral' ? 'bg-amber-50 border border-amber-200' :
-                          'bg-red-50 border border-red-200'
-                        }`}>
+                        <div className={`flex items-center justify-between p-3 rounded-xl text-sm ${sustainTag === 'Green' ? 'bg-green-50 border border-green-200' :
+                            sustainTag === 'Neutral' ? 'bg-amber-50 border border-amber-200' :
+                              'bg-red-50 border border-red-200'
+                          }`}>
                           <span className="font-bold text-muted">Carbon Score</span>
                           <span className="font-black">
                             {carbonScore} kg CO₂e
-                            <span className={`ml-2 px-2 py-0.5 rounded-full text-xs font-bold ${
-                              sustainTag === 'Green' ? 'bg-green-200 text-green-800' :
-                              sustainTag === 'Neutral' ? 'bg-amber-200 text-amber-800' :
-                              'bg-red-200 text-red-800'
-                            }`}>{sustainTag}</span>
+                            <span className={`ml-2 px-2 py-0.5 rounded-full text-xs font-bold ${sustainTag === 'Green' ? 'bg-green-200 text-green-800' :
+                                sustainTag === 'Neutral' ? 'bg-amber-200 text-amber-800' :
+                                  'bg-red-200 text-red-800'
+                              }`}>{sustainTag}</span>
                           </span>
                         </div>
                       )}
@@ -317,7 +315,7 @@ export default function MyCertificatesPage() {
                   {/* BACK SIDE */}
                   <div className="absolute inset-0 backface-hidden rotate-y-180 bg-surface rounded-[24px] border border-black/[0.05] shadow-lg flex flex-col items-center justify-center p-4 space-y-4 overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-br from-accent-blue/5 to-accent-purple/5 pointer-events-none" />
-                    
+
                     {req.tokenId != null ? (
                       <>
                         <div className="relative z-10 bg-background p-3 rounded-2xl border border-black/5 shadow-inner">
@@ -376,7 +374,7 @@ export default function MyCertificatesPage() {
               return (
                 <div key={`nft-${cert.tokenId}`} className="group perspective-1000 hover:z-10 h-full">
                   <div className="relative w-full h-full preserve-3d transition-transform duration-700 will-change-transform group-hover:rotate-y-180">
-                    
+
                     {/* FRONT SIDE */}
                     <div className="relative backface-hidden shining-card bg-surface rounded-[24px] border border-black/[0.05] shadow-sm flex flex-col overflow-hidden h-full">
                       <div className="h-1.5 w-full" style={{ background: 'linear-gradient(90deg, #FF8DA1, #e05c7a, #a78bfa)' }} />
@@ -444,11 +442,11 @@ export default function MyCertificatesPage() {
                     {/* BACK SIDE */}
                     <div className="absolute inset-0 backface-hidden rotate-y-180 bg-surface rounded-[24px] border border-black/[0.05] shadow-lg flex flex-col items-center justify-center p-4 space-y-4 overflow-hidden">
                       <div className="absolute inset-0 bg-gradient-to-br from-accent-pink/5 to-accent-purple/5 pointer-events-none" />
-                      
+
                       <div className="relative z-10 bg-background p-3 rounded-2xl border border-black/5 shadow-inner">
                         <QRCodeCanvas id={`qr-cert-${cert.tokenId}`} value={`${QR_PREFIX_CERT}${cert.tokenId}`} size={220} level="H" includeMargin />
                       </div>
-                      
+
                       <div className="text-center relative z-10">
                         <h3 className="font-black text-lg font-display mb-1">Certificate QR</h3>
                         <button
@@ -468,7 +466,7 @@ export default function MyCertificatesPage() {
                   </div>
                 </div>
               );
-          })}
+            })}
 
         </div>
       )}
