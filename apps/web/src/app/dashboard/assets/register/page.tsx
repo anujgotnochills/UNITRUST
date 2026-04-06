@@ -93,13 +93,15 @@ export default function RegisterAssetPage() {
       const { metadataUri } = await ipfsService.uploadMetadata(metadata);
 
       setStep(2);
-      toast.loading('Recording asset…', { id: mintToast });
+      toast.loading('Recording asset via frictionless protocol…', { id: mintToast });
+
+      const generatedTokenId = Math.floor(Math.random() * 90000) + 10000; // 5-digit number
 
       await assetService.recordAsset({
-        tokenId: Date.now(),
+        tokenId: generatedTokenId,
         ownerWallet: address,
         metadataURI: metadataUri,
-        txHash: '',
+        txHash: '0x0000000000000000000000000000simulated',
         assetName: formData.name,
         category: formData.category,
       });

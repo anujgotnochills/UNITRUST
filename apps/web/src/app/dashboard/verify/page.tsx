@@ -3,7 +3,22 @@
 import React, { useState } from 'react';
 import { usePublicClient } from 'wagmi';
 import { PRODUCT_NFT_ADDRESS, PRODUCT_NFT_ABI, CERTIFICATE_NFT_ADDRESS, CERTIFICATE_NFT_ABI } from '@/lib/contracts';
+import { assetService } from '@/services/assetService';
 import toast from 'react-hot-toast';
+
+function resolveIpfs(uri: string): string {
+  if (!uri) return '';
+  if (uri.startsWith('ipfs://')) return 'https://gateway.pinata.cloud/ipfs/' + uri.replace('ipfs://', '');
+  return uri;
+}
+
+async function fetchMetadata(uri: string): Promise<any> {
+  try {
+    const res = await fetch(resolveIpfs(uri));
+    if (!res.ok) return null;
+    return res.json();
+  } catch { return null; }
+}
 
 export default function VerifyPage() {
   const [inputId, setInputId] = useState('');
@@ -37,14 +52,26 @@ export default function VerifyPage() {
                      abi: PRODUCT_NFT_ABI,
                      functionName: 'tokenURI',
                      args: [tokenId]
-                 });
-                 setResult({ type: 'Product Asset', owner, uri, tokenId: Number(tokenId) });
+                 }) as string;
+                 const metadata = await fetchMetadata(uri);
+                 setResult({ type: 'Product Asset', owner, uri, tokenId: Number(tokenId), metadata });
                  toast.success('Asset verified on-chain!');
                  setIsVerifying(false);
                  return;
              }
          } catch(e) { 
-             // Fails if token doesn't exist on this contract
+             // Fallback: Check MongoDB backend for Gasless / Simulated assets
+             try {
+                const resultObj = await assetService.getAssetByTokenId(Number(tokenId));
+                const dbAsset = resultObj?.asset || resultObj; // Handle `{asset:...}` or raw asset
+                if (dbAsset && dbAsset.ownerWallet) {
+                    const metadata = await fetchMetadata(dbAsset.metadataURI);
+                    setResult({ type: 'Protocol Asset (Off-Chain)', owner: dbAsset.ownerWallet, uri: dbAsset.metadataURI, tokenId: Number(tokenId), metadata });
+                    toast.success('Asset verified in Unitrust Database!');
+                    setIsVerifying(false);
+                    return;
+                }
+             } catch (dbErr) { }
          }
 
          // Try Certificate
@@ -69,7 +96,9 @@ export default function VerifyPage() {
                      args: [tokenId]
                  }).catch(() => null); // getIssuer / issuerOf fallback
 
-                 setResult({ type: 'Soulbound Certificate', owner, issuer, uri, tokenId: Number(tokenId) });
+                 const metadata = await fetchMetadata(uri as string);
+
+                 setResult({ type: 'Soulbound Certificate', owner, issuer, uri, tokenId: Number(tokenId), metadata });
                  toast.success('Certificate verified on-chain!');
                  setIsVerifying(false);
                  return;
@@ -140,6 +169,26 @@ export default function VerifyPage() {
                </div>
            </div>
 
+           {result.metadata && (
+               <div className="flex bg-[#FAF7F5] rounded-2xl overflow-hidden border border-black/5">
+                   {result.metadata.image && (
+                     <div className="w-1/3 min-h-[120px] bg-black/5 shrink-0">
+                        <img src={resolveIpfs(result.metadata.image)} alt="Asset Image" className="w-full h-full object-cover" />
+                     </div>
+                   )}
+                   <div className="p-6 flex flex-col justify-center">
+                     <h4 className="text-xl font-black font-display text-[#1A1A1A]">
+                        {result.metadata.name || `Asset #${result.tokenId}`}
+                     </h4>
+                     {result.metadata.description && (
+                        <p className="mt-2 text-sm text-muted line-clamp-3">
+                           {result.metadata.description}
+                        </p>
+                     )}
+                   </div>
+               </div>
+           )}
+
            <div className="space-y-4">
                <div>
                   <span className="text-xs font-bold text-muted uppercase tracking-widest">Token ID</span>
@@ -157,7 +206,7 @@ export default function VerifyPage() {
                )}
                <div>
                   <span className="text-xs font-bold text-muted uppercase tracking-widest">IPFS Document URI</span>
-                  <a href={result.uri?.replace('ipfs://', 'https://gateway.pinata.cloud/ipfs/')} target="_blank" rel="noreferrer" className="font-mono text-sm mt-1 text-accent-pink bg-accent-pink/5 hover:bg-accent-pink/10 transition-colors p-3 rounded-xl break-all block">
+                  <a href={resolveIpfs(result.uri)} target="_blank" rel="noreferrer" className="font-mono text-sm mt-1 text-accent-pink bg-accent-pink/5 hover:bg-accent-pink/10 transition-colors p-3 rounded-xl break-all block">
                      {result.uri}
                   </a>
                </div>
