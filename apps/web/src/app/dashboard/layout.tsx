@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAccount, useDisconnect } from 'wagmi';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useRoleStore } from '@/store/roleStore';
 import { 
   LayoutDashboard, 
   Box, 
@@ -13,8 +14,6 @@ import {
   FileCheck, 
   Clock, 
   ShieldCheck, 
-  FilePlus, 
-  Files,
   LogOut,
   Wallet
 } from 'lucide-react';
@@ -41,11 +40,9 @@ const sidebarLinks = [
     ]
   },
   {
-    title: 'Requests & Auth',
+    title: 'Verify',
     items: [
-      { title: 'Verify', href: '/dashboard/verify', icon: ShieldCheck },
-      { title: 'New Request', href: '/dashboard/requests/new', icon: FilePlus },
-      { title: 'My Requests', href: '/dashboard/requests', icon: Files },
+      { title: 'Verify Authenticity', href: '/dashboard/verify', icon: ShieldCheck },
     ]
   }
 ];
@@ -59,11 +56,43 @@ export default function DashboardLayout({
   const router = useRouter();
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
+  const { role, clearRole } = useRoleStore();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Auth guards
+  useEffect(() => {
+    if (!mounted) return;
+
+    if (!isConnected) {
+      router.push('/connect');
+      return;
+    }
+
+    if (!role) {
+      router.push('/connect/role');
+      return;
+    }
+
+    if (role === 'institute') {
+      router.push('/institute/request');
+      return;
+    }
+  }, [isConnected, role, mounted, router]);
+
+  const handleDisconnect = () => {
+    clearRole();
+    disconnect();
+    router.push('/');
+  };
+
+  // Don't render until mounted and properly authenticated
+  if (!mounted || !isConnected || !role || role !== 'user') {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-[#FAF7F5] flex">
@@ -127,7 +156,7 @@ export default function DashboardLayout({
 
         <div className="p-4 border-t border-[#1A1A1A]/10">
           <button 
-            onClick={() => { disconnect(); router.push('/'); }}
+            onClick={handleDisconnect}
             className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium text-red-500 hover:bg-red-50 transition-colors"
           >
             <LogOut className="w-4 h-4" />
@@ -150,16 +179,12 @@ export default function DashboardLayout({
                 Amoy Testnet Active
               </span>
             </div>
-            {mounted && isConnected ? (
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-[#1A1A1A]/10 shadow-sm">
-                <Wallet className="w-4 h-4 text-[#1A1A1A]" />
-                <span className="text-sm font-mono font-medium text-[#1A1A1A]">
-                  {address?.slice(0, 6)}...{address?.slice(-4)}
-                </span>
-              </div>
-            ) : (
-              mounted && <ConnectButton showBalance={false} chainStatus="none" />
-            )}
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-[#1A1A1A]/10 shadow-sm">
+              <Wallet className="w-4 h-4 text-[#1A1A1A]" />
+              <span className="text-sm font-mono font-medium text-[#1A1A1A]">
+                {address?.slice(0, 6)}...{address?.slice(-4)}
+              </span>
+            </div>
           </div>
         </header>
 

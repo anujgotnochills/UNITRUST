@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
-import { Menu, X, ChevronDown, ExternalLink } from 'lucide-react';
+import { Menu, X, ChevronDown, ExternalLink, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import Link from 'next/link';
 
 const navLinks = [
   {
@@ -14,23 +15,9 @@ const navLinks = [
       { label: 'Carbon Tracking', desc: 'On-chain sustainability metrics', href: '#features' },
     ],
   },
-  {
-    label: 'Developers',
-    children: [
-      { label: 'Documentation', desc: 'Integrate with UniTrust APIs', href: '#' },
-      { label: 'Smart Contracts', desc: 'Audited Solidity contracts', href: '#' },
-      { label: 'SDK & Tools', desc: 'Build faster with our SDK', href: '#' },
-    ],
-  },
-  {
-    label: 'Ecosystem',
-    children: [
-      { label: 'Partners', desc: 'Our growing network', href: '#community' },
-      { label: 'Community', desc: 'Join 50k+ builders', href: '#community' },
-    ],
-  },
+  { label: 'Use Cases', href: '#usecases' },
   { label: 'Roadmap', href: '#roadmap' },
-  { label: 'About', href: '#' },
+  { label: 'Community', href: '#community' },
 ];
 
 export function Navbar() {
@@ -121,9 +108,10 @@ export function Navbar() {
 
           {/* Right */}
           <div className="hidden lg:flex items-center gap-3">
-            <a href="/dashboard" className="bg-white text-black px-6 py-2 rounded-full text-sm font-bold hover:bg-gray-100 transition-colors">
+            <Link href="/connect" className="bg-white text-black px-6 py-2 rounded-full text-sm font-bold hover:bg-gray-100 transition-colors flex items-center gap-2">
               Launch App
-            </a>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
 
           {/* Mobile hamburger */}
@@ -162,15 +150,11 @@ export function Navbar() {
           </div>
 
           <div className="flex flex-col gap-3 mt-10">
-            <Button variant="primary" size="lg" className="w-full">
-              Get Started
-            </Button>
-            <a href="/dashboard" className="w-full">
-              <Button variant="outline" size="lg" className="w-full">
+            <Link href="/connect" onClick={() => setMobileOpen(false)}>
+              <Button variant="primary" size="lg" className="w-full">
                 Launch App
-                <ExternalLink className="w-4 h-4" />
               </Button>
-            </a>
+            </Link>
           </div>
         </div>
       </div>

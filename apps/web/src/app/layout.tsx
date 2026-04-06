@@ -51,7 +51,7 @@ export default function RootLayout({
       className={`${inter.variable} ${fraunces.variable}`}
       suppressHydrationWarning
     >
-      <body className="bg-background text-[#1A1A1A] font-body antialiased dot-grid-bg relative">
+      <body suppressHydrationWarning className="bg-background text-[#1A1A1A] font-body antialiased dot-grid-bg relative">
         <Web3Provider>
           <SmoothScrollProvider>
             {children}

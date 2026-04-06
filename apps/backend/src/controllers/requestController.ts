@@ -136,3 +136,12 @@ export async function getRequestsByInstitute(req: Request, res: Response): Promi
     res.status(500).json({ success: false, error: error.message });
   }
 }
+
+export async function getAllRequests(req: Request, res: Response): Promise<void> {
+  try {
+    const requests = await CertificateRequest.find({}).sort({ createdAt: -1 });
+    res.json({ requests });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+}

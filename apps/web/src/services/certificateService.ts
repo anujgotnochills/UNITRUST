@@ -63,6 +63,12 @@ export const certificateService = {
     return res.data;
   },
 
+  // Admin
+  async getAllRequests() {
+    const res = await api.get('/requests/all');
+    return res.data;
+  },
+
   // Hidden
   async hideCertificate(walletAddress: string, tokenId: number) {
     const res = await api.post('/hidden/hide', { walletAddress, tokenId });
