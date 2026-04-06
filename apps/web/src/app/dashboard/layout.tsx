@@ -83,7 +83,7 @@ export default function DashboardLayout({
   }, [isConnected, role, mounted, router]);
 
   const handleDisconnect = () => {
-    clearRole();
+    // Do NOT clear role — next time same wallet reconnects, role is remembered
     disconnect();
     router.push('/');
   };

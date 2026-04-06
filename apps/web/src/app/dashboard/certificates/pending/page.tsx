@@ -44,10 +44,10 @@ export default function PendingRequestsPage() {
     ...(instReqsData?.requests || []),
   ];
 
-  // Deduplicate and show all non-rejected, non-minted requests
+  // Only show truly PENDING requests — accepted/minted move to My Certificates
   const activeRequests = Array.from(
     new Map(allRequests.map((r: any) => [r._id, r])).values()
-  ).filter((r: any) => !['rejected', 'minted'].includes(r.status));
+  ).filter((r: any) => r.status === 'pending');
 
   const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: ['requests-user', address] });
@@ -132,7 +132,8 @@ export default function PendingRequestsPage() {
         <div className="bg-white rounded-[32px] border border-black/[0.05] shadow-sm p-32 text-center">
           <div className="max-w-xs mx-auto space-y-4">
             <p className="text-4xl">📭</p>
-            <p className="text-muted font-medium text-lg">No active requests to review.</p>
+            <p className="text-muted font-medium text-lg">No pending requests.</p>
+            <p className="text-sm text-muted">Accepted certificates appear in <span className="font-bold text-[#1A1A1A]">My Certificates</span>.</p>
           </div>
         </div>
       ) : (

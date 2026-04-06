@@ -28,48 +28,13 @@ export default function RoleSelectPage() {
       router.push('/connect');
       return;
     }
-    if (!address) return;
-
-    // Check if this wallet already has a registered profile
-    const checkExisting = async () => {
-      setCheckingProfile(true);
-      // Check cached role first
-      const cached = getRoleForWallet(address);
-      if (cached === 'user') {
-        setRole(cached);
-        router.push('/dashboard');
-        return;
-      }
-      if (cached === 'institute') {
-        setRole(cached);
-        router.push('/institute/request');
-        return;
-      }
-
-      // Check backend
-      try {
-        const userRes = await profileService.getUserProfile(address);
-        if (userRes?.profile) {
-          setRoleForWallet(address, 'user');
-          router.push('/dashboard');
-          return;
-        }
-      } catch {}
-
-      try {
-        const instRes = await profileService.getInstituteProfile(address);
-        if (instRes?.profile) {
-          setRoleForWallet(address, 'institute');
-          router.push('/institute/request');
-          return;
-        }
-      } catch {}
-
-      // No existing profile — allow role selection
-      setCheckingProfile(false);
-    };
-    checkExisting();
-  }, [isConnected, address, mounted, router]);
+    // If they already have a saved role, skip this page and route directly
+    if (role === 'user') {
+      router.push('/dashboard');
+    } else if (role === 'institute') {
+      router.push('/institute/request');
+    }
+  }, [isConnected, role, mounted, router]);
 
   const handleRoleSelect = async (selectedRole: 'user' | 'institute') => {
     if (!address) return;
