@@ -6,8 +6,8 @@ export const assetService = {
     ownerWallet: string;
     metadataURI: string;
     txHash: string;
-    carbonScore?: number;
-    sustainabilityTag?: string;
+    assetName: string;
+    category: string;
   }) {
     const res = await api.post('/assets/record', data);
     return res.data;

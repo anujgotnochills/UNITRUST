@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAccount } from 'wagmi';
 import { assetService } from '@/services/assetService';
 import { ipfsService } from '@/services/ipfsService';
-import { QR_PREFIX_ASSET, ASSET_CATEGORIES, SUSTAINABILITY_TAGS, IPFS_GATEWAY } from '@/lib/constants';
+import { QR_PREFIX_ASSET, ASSET_CATEGORIES, IPFS_GATEWAY } from '@/lib/constants';
 import { UploadDropzone } from '@/components/shared/UploadDropzone';
 import { QRCard } from '@/components/shared/QRCard';
 import { QRScanner } from '@/components/shared/QRScanner';
@@ -12,6 +12,7 @@ import {
   TokenBadge, CarbonBadge, TxHashLink, LoadingState, EmptyState,
   StepIndicator, WalletAddress,
 } from '@/components/shared';
+import { calculateCarbonScore, type CarbonScoreResult } from '@unitrust/shared';
 import toast from 'react-hot-toast';
 
 export default function UserAssetsPage() {
@@ -22,9 +23,14 @@ export default function UserAssetsPage() {
 
   // Registration form
   const [formData, setFormData] = useState({
-    name: '', description: '', category: 'Electronics',
-    carbonScore: 0, sustainabilityTag: 'Green', ecoDescription: '',
+    name: '', description: '', category: 'Electronics', ecoDescription: '',
   });
+
+  // Auto-calculated carbon score
+  const carbonResult: CarbonScoreResult = useMemo(
+    () => calculateCarbonScore(formData.name, formData.category),
+    [formData.name, formData.category]
+  );
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState('');
   const [minting, setMinting] = useState(false);
@@ -36,6 +42,9 @@ export default function UserAssetsPage() {
   const [transferModal, setTransferModal] = useState<{ tokenId: number; show: boolean }>({ tokenId: 0, show: false });
   const [transferTo, setTransferTo] = useState('');
   const [transferring, setTransferring] = useState(false);
+
+  // QR Modal
+  const [qrModal, setQrModal] = useState<{ tokenId: number; show: boolean }>({ tokenId: 0, show: false });
 
   // QR Scanner
   const [scannedAsset, setScannedAsset] = useState<any>(null);
@@ -103,8 +112,9 @@ export default function UserAssetsPage() {
         image: imageResult.ipfsUrl || '',
         attributes: [
           { trait_type: 'Category', value: formData.category },
-          { trait_type: 'Carbon Score', value: formData.carbonScore },
-          { trait_type: 'Sustainability Tag', value: formData.sustainabilityTag },
+          { trait_type: 'Carbon Score', value: carbonResult.carbonScore },
+          { trait_type: 'Sustainability Tag', value: carbonResult.sustainabilityTag },
+          { trait_type: 'Carbon Match', value: carbonResult.matchedLabel },
           { trait_type: 'Eco Description', value: formData.ecoDescription },
           { trait_type: 'Original Owner', value: address },
           { trait_type: 'Registered On', value: new Date().toISOString() },
@@ -120,8 +130,8 @@ export default function UserAssetsPage() {
         ownerWallet: address,
         metadataURI: metadataResult.metadataUri,
         txHash: '',
-        carbonScore: formData.carbonScore,
-        sustainabilityTag: formData.sustainabilityTag,
+        assetName: formData.name,
+        category: formData.category,
       });
 
       setMintStep(3);
@@ -130,7 +140,7 @@ export default function UserAssetsPage() {
       setMinting(false);
 
       // Reset form
-      setFormData({ name: '', description: '', category: 'Electronics', carbonScore: 0, sustainabilityTag: 'Green', ecoDescription: '' });
+      setFormData({ name: '', description: '', category: 'Electronics', ecoDescription: '' });
       setImageFile(null);
       setImagePreview('');
       fetchAssets();
@@ -239,6 +249,12 @@ export default function UserAssetsPage() {
                       <div className="asset-card-actions">
                         <button
                           className="btn btn-sm btn-secondary"
+                          onClick={() => setQrModal({ tokenId: asset.tokenId, show: true })}
+                        >
+                          📷 View QR
+                        </button>
+                        <button
+                          className="btn btn-sm btn-secondary"
                           onClick={() => setTransferModal({ tokenId: asset.tokenId, show: true })}
                         >
                           🔄 Transfer
@@ -332,31 +348,35 @@ export default function UserAssetsPage() {
               </div>
 
               <hr className="section-divider" />
-              <h4 style={{ marginBottom: '1rem' }}>🌿 Carbon Tracking</h4>
+              <h4 style={{ marginBottom: '1rem' }}>🌿 Carbon Footprint (Auto-Estimated)</h4>
 
-              <div className="grid-2">
-                <div className="form-group">
-                  <label className="form-label">Carbon Score (kg CO₂)</label>
-                  <input
-                    className="form-input"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={formData.carbonScore}
-                    onChange={(e) => setFormData({ ...formData, carbonScore: parseFloat(e.target.value) || 0 })}
-                  />
+              {formData.name.trim() ? (
+                <div
+                  style={{
+                    padding: '1rem',
+                    borderRadius: '12px',
+                    border: `2px solid ${carbonResult.sustainabilityTag === 'Green' ? '#16A34A' : carbonResult.sustainabilityTag === 'Neutral' ? '#D97706' : '#DC2626'}`,
+                    backgroundColor: carbonResult.sustainabilityTag === 'Green' ? '#F0FDF4' : carbonResult.sustainabilityTag === 'Neutral' ? '#FFFBEB' : '#FEF2F2',
+                    marginBottom: '1rem',
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                    <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+                      {carbonResult.matched ? '✅ Matched' : '📋 Category Default'}: {carbonResult.matchedLabel}
+                    </span>
+                    <CarbonBadge tag={carbonResult.sustainabilityTag} score={carbonResult.carbonScore} />
+                  </div>
+                  <div style={{ display: 'flex', gap: '1.5rem', fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                    <span><strong>Score:</strong> {carbonResult.carbonScore} tCO₂e</span>
+                    <span><strong>Tag:</strong> {carbonResult.sustainabilityTag}</span>
+                    <span><strong>Source:</strong> {carbonResult.matchSource.replace('_', ' ')}</span>
+                  </div>
                 </div>
-                <div className="form-group">
-                  <label className="form-label">Sustainability Tag</label>
-                  <select
-                    className="form-select"
-                    value={formData.sustainabilityTag}
-                    onChange={(e) => setFormData({ ...formData, sustainabilityTag: e.target.value })}
-                  >
-                    {SUSTAINABILITY_TAGS.map((t) => <option key={t} value={t}>{t}</option>)}
-                  </select>
-                </div>
-              </div>
+              ) : (
+                <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem', fontStyle: 'italic' }}>
+                  Enter an asset name above to auto-detect carbon footprint.
+                </p>
+              )}
 
               <div className="form-group">
                 <label className="form-label">Eco Notes</label>
@@ -416,25 +436,45 @@ export default function UserAssetsPage() {
               Transfer Asset #{transferModal.tokenId} to a new owner. Enter their wallet address.
             </p>
             <div className="form-group">
-              <label className="form-label">Recipient Wallet Address</label>
-              <input
-                className="form-input"
-                placeholder="0x..."
-                value={transferTo}
-                onChange={(e) => setTransferTo(e.target.value)}
-                autoFocus
-              />
+               <label className="form-label">Recipient Wallet Address</label>
+               <input
+                 className="form-input"
+                 placeholder="0x..."
+                 value={transferTo}
+                 onChange={(e) => setTransferTo(e.target.value)}
+                 autoFocus
+               />
             </div>
             <div className="modal-actions">
-              <button className="btn btn-secondary" onClick={() => { setTransferModal({ tokenId: 0, show: false }); setTransferTo(''); }}>
-                Cancel
-              </button>
-              <button
-                className="btn btn-primary"
-                onClick={() => handleTransfer(transferModal.tokenId)}
-                disabled={!transferTo || transferring}
-              >
-                {transferring ? 'Transferring...' : 'Transfer'}
+               <button className="btn btn-secondary" onClick={() => { setTransferModal({ tokenId: 0, show: false }); setTransferTo(''); }}>
+                 Cancel
+               </button>
+               <button
+                 className="btn btn-primary"
+                 onClick={() => handleTransfer(transferModal.tokenId)}
+                 disabled={!transferTo || transferring}
+               >
+                 {transferring ? 'Transferring...' : 'Transfer'}
+               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* === QR MODAL === */}
+      {qrModal.show && (
+        <div className="modal-overlay" onClick={() => setQrModal({ tokenId: 0, show: false })}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ textAlign: 'center' }}>
+            <h3 className="modal-title" style={{ marginBottom: '1.5rem' }}>Asset QR Code</h3>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
+              <QRCard
+                data={`${QR_PREFIX_ASSET}${qrModal.tokenId}`}
+                label={`Asset #${qrModal.tokenId}`}
+              />
+            </div>
+            <div className="modal-actions" style={{ justifyContent: 'center' }}>
+              <button className="btn btn-primary" onClick={() => setQrModal({ tokenId: 0, show: false })}>
+                Close
               </button>
             </div>
           </div>

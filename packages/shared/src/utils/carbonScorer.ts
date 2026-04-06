@@ -2,44 +2,42 @@ import {
   CARBON_DATABASE,
   CATEGORY_DEFAULTS,
   GLOBAL_FALLBACK,
-} from '@unitrust/shared';
+  type SustainabilityTag,
+} from '../constants/carbonDatabase';
 
-type SustainabilityTag = 'Green' | 'Neutral' | 'High Impact';
-
-interface CarbonScoreResult {
+export interface CarbonScoreResult {
   carbonScore: number;
   sustainabilityTag: SustainabilityTag;
-  matched: boolean;
-  matchedLabel: string;
+  matched: boolean;           // true = keyword hit, false = fallback used
+  matchedLabel: string;       // human-readable label explaining the match
   matchSource: 'keyword' | 'category_default' | 'global_default';
 }
 
 /**
- * Determines sustainability tag from carbon score
+ * Auto-calculates carbon score from asset name + category.
+ *
+ * Priority:
+ *   1. Exact keyword match (longest keyword first for accuracy)
+ *   2. Category-level fallback
+ *   3. Global fallback (unknown item / unknown category)
+ *
+ * All matching is case-insensitive.
  */
-export function getTagFromScore(score: number): SustainabilityTag {
-  if (score < 0.1) return 'Green';
-  if (score <= 1.0) return 'Neutral';
-  return 'High Impact';
-}
-
-/**
- * Server-side carbon score calculation.
- * This is the authoritative source — frontend scores are re-validated here.
- */
-export function calculateCarbonScoreServer(assetName: string, category: string): CarbonScoreResult {
+export function calculateCarbonScore(assetName: string, category: string): CarbonScoreResult {
   const nameLower = assetName.toLowerCase().trim();
   const categoryTrimmed = category.trim();
 
+  // Edge case: empty asset name — use category default directly
   if (!nameLower) {
     return getCategoryFallback(categoryTrimmed);
   }
 
-  // Step 1: Match within category
+  // Step 1: Filter entries matching the category first for tighter scope
   const categoryEntries = CARBON_DATABASE.filter(
     (entry) => entry.category.toLowerCase() === categoryTrimmed.toLowerCase()
   );
 
+  // Step 2: Try matching keywords within category-scoped entries
   const categoryMatch = findBestMatch(nameLower, categoryEntries);
   if (categoryMatch) {
     return {
@@ -51,22 +49,27 @@ export function calculateCarbonScoreServer(assetName: string, category: string):
     };
   }
 
-  // Step 2: Cross-category match
+  // Step 3: Try matching ALL entries (cross-category) in case user
+  // picked wrong category but the item name is recognizable
   const globalMatch = findBestMatch(nameLower, CARBON_DATABASE);
   if (globalMatch) {
     return {
       carbonScore: globalMatch.carbonScore,
       sustainabilityTag: globalMatch.sustainabilityTag,
       matched: true,
-      matchedLabel: `${globalMatch.label} (from ${globalMatch.category})`,
+      matchedLabel: `${globalMatch.label} (matched from ${globalMatch.category})`,
       matchSource: 'keyword',
     };
   }
 
-  // Step 3: Category fallback
+  // Step 4: No keyword match — use category fallback
   return getCategoryFallback(categoryTrimmed);
 }
 
+/**
+ * Finds the best matching entry by checking all keywords.
+ * Prefers longer keyword matches (more specific).
+ */
 function findBestMatch(
   nameLower: string,
   entries: typeof CARBON_DATABASE
@@ -77,6 +80,7 @@ function findBestMatch(
   for (const entry of entries) {
     for (const keyword of entry.keywords) {
       if (nameLower.includes(keyword.toLowerCase())) {
+        // Prefer longer keyword matches (e.g., "electric car" > "car")
         if (keyword.length > bestKeywordLength) {
           bestKeywordLength = keyword.length;
           bestMatch = entry;
@@ -88,6 +92,9 @@ function findBestMatch(
   return bestMatch;
 }
 
+/**
+ * Returns category-level fallback, or global fallback if category unknown
+ */
 function getCategoryFallback(category: string): CarbonScoreResult {
   const catDefault = CATEGORY_DEFAULTS[category];
 
@@ -101,32 +108,12 @@ function getCategoryFallback(category: string): CarbonScoreResult {
     };
   }
 
+  // Unknown category — global fallback
   return {
     carbonScore: GLOBAL_FALLBACK.carbonScore,
     sustainabilityTag: GLOBAL_FALLBACK.sustainabilityTag,
     matched: false,
     matchedLabel: GLOBAL_FALLBACK.label,
     matchSource: 'global_default',
-  };
-}
-
-/**
- * Validates and normalizes carbon data — now always re-calculates server-side
- */
-export function normalizeCarbonData(
-  assetName: string,
-  category: string
-): {
-  carbonScore: number;
-  sustainabilityTag: string;
-  matchedLabel: string;
-  matchSource: string;
-} {
-  const result = calculateCarbonScoreServer(assetName, category);
-  return {
-    carbonScore: result.carbonScore,
-    sustainabilityTag: result.sustainabilityTag,
-    matchedLabel: result.matchedLabel,
-    matchSource: result.matchSource,
   };
 }

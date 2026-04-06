@@ -1,9 +1,13 @@
 import { Request, Response } from 'express';
 import { AssetRecord } from '../models/AssetRecord';
+import { normalizeCarbonData } from '../services/carbonService';
 
 export async function recordAsset(req: Request, res: Response): Promise<void> {
   try {
-    const { tokenId, ownerWallet, metadataURI, txHash, carbonScore, sustainabilityTag } = req.body;
+    const { tokenId, ownerWallet, metadataURI, txHash, assetName, category } = req.body;
+
+    // Server-side carbon calculation — never trust the client
+    const carbonData = normalizeCarbonData(assetName || '', category || 'Other');
 
     const record = await AssetRecord.findOneAndUpdate(
       { tokenId },
@@ -12,13 +16,20 @@ export async function recordAsset(req: Request, res: Response): Promise<void> {
         ownerWallet: ownerWallet.toLowerCase(),
         metadataURI,
         txHash,
-        carbonScore: carbonScore || 0,
-        sustainabilityTag: sustainabilityTag || 'Green',
+        carbonScore: carbonData.carbonScore,
+        sustainabilityTag: carbonData.sustainabilityTag,
       },
       { upsert: true, new: true }
     );
 
-    res.status(201).json({ success: true, record });
+    res.status(201).json({
+      success: true,
+      record,
+      carbonMatch: {
+        label: carbonData.matchedLabel,
+        source: carbonData.matchSource,
+      },
+    });
   } catch (error: any) {
     res.status(500).json({ success: false, error: error.message });
   }

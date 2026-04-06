@@ -39,6 +39,12 @@ export {
   DEFAULT_USER_AVATAR_DATA_URI,
 } from './constants/defaults';
 
+// Carbon Database & Scorer
+export { CARBON_DATABASE, CATEGORY_DEFAULTS, GLOBAL_FALLBACK } from './constants/carbonDatabase';
+export type { CarbonEntry, SustainabilityTag } from './constants/carbonDatabase';
+export { calculateCarbonScore } from './utils/carbonScorer';
+export type { CarbonScoreResult } from './utils/carbonScorer';
+
 // Utils
 export { formatAddress } from './utils/formatAddress';
 export { formatDate, formatDateTime } from './utils/formatDate';
