@@ -72,7 +72,7 @@
   .dot-grid-bg {
     position: relative;
     background-color: var(--page-bg, var(--color-bg));
-    background-image: radial-gradient(var(--dot-color, rgba(26,26,26,0.35)) 1px, transparent 1px);
+    background-image: radial-gradient(var(--dot-color, rgba(26,26,26,0.55)) 1.5px, transparent 1.5px);
     background-size: 28px 28px;
     background-attachment: fixed;
   }

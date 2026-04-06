@@ -56,7 +56,38 @@ export const DecentralisedTrust = () => {
         ease: 'none',
       });
 
-      // Handle the pinning and horizontal scroll
+      // Single pin ScrollTrigger — all theme changes via instant callbacks
+      // onEnter      = section pins, horizontal scroll starts → go dark
+      // onLeave      = horizontal scroll ends, section unpins   → go light
+      // onEnterBack  = user scrolls back into pinned section    → go dark
+      // onLeaveBack  = user scrolls above the section           → go light
+      const snapToLight = () => {
+        gsap.to([document.documentElement, document.body], {
+          '--color-bg': '#FAF7F5',
+          '--page-bg': '#FAF7F5',
+          '--color-text-primary': '#1A1A1A',
+          '--dot-color': 'rgba(26,26,26,0.55)',
+          backgroundColor: '#FAF7F5',
+          color: '#1A1A1A',
+          duration: 0.35,
+          ease: 'power2.inOut',
+          overwrite: true,
+        });
+      };
+      const snapToDark = () => {
+        gsap.to([document.documentElement, document.body], {
+          '--color-bg': '#0a0a0a',
+          '--page-bg': '#0a0a0a',
+          '--color-text-primary': '#ffffff',
+          '--dot-color': 'rgba(255,255,255,0.55)',
+          backgroundColor: '#0a0a0a',
+          color: '#ffffff',
+          duration: 0.35,
+          ease: 'power2.inOut',
+          overwrite: true,
+        });
+      };
+
       ScrollTrigger.create({
         trigger: sectionEl,
         start: 'top top',
@@ -65,29 +96,13 @@ export const DecentralisedTrust = () => {
         animation: tween,
         scrub: 1.5,
         invalidateOnRefresh: true,
+        onEnter:      snapToDark,
+        onLeave:      snapToLight,
+        onEnterBack:  snapToDark,
+        onLeaveBack:  snapToLight,
       });
 
-      const targets = [document.body, sectionEl];
 
-      // Background color transition from Light -> Dark
-      const darkTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionEl,
-          start: 'top 80%', 
-          end: 'top 20%',
-          scrub: 1,
-        },
-      });
-
-      darkTl.to([document.documentElement, document.body], {
-        '--color-bg': '#0a0a0a',
-        '--page-bg': '#0a0a0a',
-        '--color-text-primary': '#ffffff',
-        '--dot-color': '#ffffff',
-        backgroundColor: '#0a0a0a',
-        color: '#ffffff',
-        duration: 1,
-      });
 
 
 
