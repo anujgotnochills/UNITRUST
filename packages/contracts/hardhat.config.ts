@@ -21,6 +21,7 @@ const config: HardhatUserConfig = {
       url: process.env.ALCHEMY_AMOY_RPC || "https://rpc-amoy.polygon.technology",
       accounts: process.env.DEPLOYER_PRIVATE_KEY ? [process.env.DEPLOYER_PRIVATE_KEY] : [],
       chainId: 80002,
+      gasPrice: 25000000000,
     },
   },
   etherscan: {
