@@ -10,8 +10,9 @@ import Link from 'next/link';
 
 export default function ConnectPage() {
   const router = useRouter();
-  const { isConnected } = useAccount();
-  const { role } = useRoleStore();
+  const { isConnected, address } = useAccount();
+  const { getRoleForWallet } = useRoleStore();
+  const role = address ? getRoleForWallet(address) : null;
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {

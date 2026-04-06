@@ -55,7 +55,8 @@ export default function DashboardLayout({
   const router = useRouter();
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
-  const { role, clearRole } = useRoleStore();
+  const { getRoleForWallet, clearRole } = useRoleStore();
+  const role = address ? getRoleForWallet(address) : null;
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {

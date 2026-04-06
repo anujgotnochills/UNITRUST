@@ -13,7 +13,8 @@ import Image from 'next/image';
 export default function InstituteRegisterPage() {
   const router = useRouter();
   const { address, isConnected } = useAccount();
-  const { role } = useRoleStore();
+  const { getRoleForWallet } = useRoleStore();
+  const role = address ? getRoleForWallet(address) : null;
   
   const [instituteName, setInstituteName] = useState('');
   const [secretKey, setSecretKey] = useState('');

@@ -12,7 +12,8 @@ import toast from 'react-hot-toast';
 export default function RoleSelectPage() {
   const router = useRouter();
   const { isConnected, address } = useAccount();
-  const { role, setRole } = useRoleStore();
+  const { getRoleForWallet, setRole } = useRoleStore();
+  const role = address ? getRoleForWallet(address) : null;
   const [mounted, setMounted] = useState(false);
   const [hoveredRole, setHoveredRole] = useState<string | null>(null);
   const [isLoadingProfile, setIsLoadingProfile] = useState(false);
@@ -38,7 +39,7 @@ export default function RoleSelectPage() {
   const handleRoleSelect = async (selectedRole: 'user' | 'institute') => {
     if (!address) return;
     
-    setRole(selectedRole);
+    setRole(address, selectedRole);
     if (selectedRole === 'user') {
       router.push('/dashboard');
     } else {
