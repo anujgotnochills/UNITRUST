@@ -17,6 +17,9 @@ importers:
 
   apps/backend:
     dependencies:
+      '@unitrust/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       axios:
         specifier: ^1.6.0
         version: 1.14.0
@@ -72,6 +75,9 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.28.0
         version: 5.96.2(react@18.3.1)
+      '@unitrust/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       axios:
         specifier: ^1.6.0
         version: 1.14.0
