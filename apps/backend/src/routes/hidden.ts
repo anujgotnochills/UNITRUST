@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { HiddenCertificate } from '../models/HiddenCertificate';
 
-const router = Router();
+const router: import('express').Router = Router();
 
 router.post('/hide', async (req: Request, res: Response) => {
   try {

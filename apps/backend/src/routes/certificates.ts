@@ -7,7 +7,7 @@ import {
   getCertificatesByIssuer,
 } from '../controllers/certificateController';
 
-const router = Router();
+const router: import('express').Router = Router();
 
 router.post('/record', recordCertificate);
 router.post('/issue', issueCertificate);

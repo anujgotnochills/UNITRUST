@@ -9,7 +9,7 @@ import {
   getAllRequests,
 } from '../controllers/requestController';
 
-const router = Router();
+const router: import('express').Router = Router();
 
 router.post('/create', createRequest);
 router.put('/:requestId/accept', acceptRequest);
