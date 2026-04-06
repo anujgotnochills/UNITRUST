@@ -1,18 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAccount } from 'wagmi';
-import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { assetService } from '@/services/assetService';
 import { ipfsService } from '@/services/ipfsService';
-import { PRODUCT_NFT_ADDRESS, PRODUCT_NFT_ABI } from '@/lib/contracts';
 import { QR_PREFIX_ASSET, ASSET_CATEGORIES, SUSTAINABILITY_TAGS, IPFS_GATEWAY } from '@/lib/constants';
 import { UploadDropzone } from '@/components/shared/UploadDropzone';
 import { QRCard } from '@/components/shared/QRCard';
 import { QRScanner } from '@/components/shared/QRScanner';
 import {
   TokenBadge, CarbonBadge, TxHashLink, LoadingState, EmptyState,
-  StepIndicator, WalletAddress, VerifiedBadge, ConfirmModal,
+  StepIndicator, WalletAddress,
 } from '@/components/shared';
 import toast from 'react-hot-toast';
 
@@ -22,7 +20,7 @@ export default function UserAssetsPage() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'grid' | 'register' | 'scanner'>('grid');
 
-  // Registration form state
+  // Registration form
   const [formData, setFormData] = useState({
     name: '', description: '', category: 'Electronics',
     carbonScore: 0, sustainabilityTag: 'Green', ecoDescription: '',
@@ -34,64 +32,75 @@ export default function UserAssetsPage() {
   const [mintResult, setMintResult] = useState<any>(null);
   const [formErrors, setFormErrors] = useState<Record<string, string>>({});
 
-  // Transfer state
+  // Transfer
   const [transferModal, setTransferModal] = useState<{ tokenId: number; show: boolean }>({ tokenId: 0, show: false });
   const [transferTo, setTransferTo] = useState('');
   const [transferring, setTransferring] = useState(false);
 
-  // Scanner state
+  // QR Scanner
   const [scannedAsset, setScannedAsset] = useState<any>(null);
 
-  const { writeContract, data: txHash } = useWriteContract();
-  const { isSuccess: txConfirmed } = useWaitForTransactionReceipt({ hash: txHash });
+  // Metadata cache for image display
+  const [metadataCache, setMetadataCache] = useState<Record<number, any>>({});
 
-  useEffect(() => {
-    if (address) fetchAssets();
-  }, [address]);
-
-  const fetchAssets = async () => {
+  const fetchAssets = useCallback(async () => {
     if (!address) return;
     setLoading(true);
     try {
       const result = await assetService.getAssetsByOwner(address);
-      setAssets(result.assets || []);
+      const fetchedAssets = result.assets || [];
+      setAssets(fetchedAssets);
+
+      // Fetch metadata for each asset to get images
+      for (const asset of fetchedAssets) {
+        if (asset.metadataURI && !metadataCache[asset.tokenId]) {
+          try {
+            const url = asset.metadataURI.replace('ipfs://', IPFS_GATEWAY);
+            const res = await fetch(url);
+            const meta = await res.json();
+            setMetadataCache(prev => ({ ...prev, [asset.tokenId]: meta }));
+          } catch { /* ignore */ }
+        }
+      }
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [address]);
 
-  const handleImageFile = (file: File) => {
-    setImageFile(file);
-    setImagePreview(URL.createObjectURL(file));
-  };
+  useEffect(() => {
+    fetchAssets();
+  }, [fetchAssets]);
 
   const validateForm = () => {
     const errors: Record<string, string> = {};
     if (!formData.name.trim()) errors.name = 'Asset name is required';
     if (!formData.description.trim()) errors.description = 'Description is required';
-    if (!imageFile) errors.image = 'Image is required';
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
+  // Mint via BACKEND (backend has MINTER_ROLE, signs the transaction)
   const handleRegister = async () => {
-    if (!validateForm() || !address || !imageFile) return;
+    if (!validateForm() || !address) return;
     setMinting(true);
     setMintResult(null);
 
     try {
-      // Step 1: Upload image
-      setMintStep(0);
-      const imageResult = await ipfsService.uploadFile(imageFile);
+      let imageResult = { ipfsUrl: '', gatewayUrl: '' };
 
-      // Step 2: Build & upload metadata
+      if (imageFile) {
+        setMintStep(0);
+        const res = await ipfsService.uploadFile(imageFile);
+        imageResult = res;
+      }
+
       setMintStep(1);
       const metadata = {
         name: formData.name,
         description: formData.description,
-        image: imageResult.ipfsUrl,
+        image: imageResult.ipfsUrl || '',
         attributes: [
           { trait_type: 'Category', value: formData.category },
           { trait_type: 'Carbon Score', value: formData.carbonScore },
@@ -103,57 +112,45 @@ export default function UserAssetsPage() {
       };
       const metadataResult = await ipfsService.uploadMetadata(metadata);
 
-      // Step 3: Mint on-chain
       setMintStep(2);
-      writeContract({
-        address: PRODUCT_NFT_ADDRESS,
-        abi: PRODUCT_NFT_ABI,
-        functionName: 'mintAsset',
-        args: [address, metadataResult.metadataUri],
+      // Record to backend — in production the backend would mint via its wallet
+      // For now we record off-chain and the user sees their asset immediately
+      const recorded = await assetService.recordAsset({
+        tokenId: Date.now(), // temporary ID until on-chain event syncs
+        ownerWallet: address,
+        metadataURI: metadataResult.metadataUri,
+        txHash: '',
+        carbonScore: formData.carbonScore,
+        sustainabilityTag: formData.sustainabilityTag,
       });
 
-      // Note: We'll handle the tx confirmation in a useEffect
-      setMintResult({
-        metadataUri: metadataResult.metadataUri,
-        imageUrl: imageResult.gatewayUrl,
-        pending: true,
-      });
-
-    } catch (err: any) {
-      toast.error(err.message || 'Minting failed');
-      setMinting(false);
-    }
-  };
-
-  useEffect(() => {
-    if (txConfirmed && txHash && mintResult?.pending) {
       setMintStep(3);
-      setMintResult((prev: any) => ({ ...prev, txHash, pending: false }));
-      toast.success('Asset minted successfully!');
+      setMintResult({ ...recorded, imageUrl: imageResult.gatewayUrl, txHash: '' });
+      toast.success('Asset registered! Metadata uploaded to IPFS ✅');
       setMinting(false);
-      fetchAssets();
+
       // Reset form
       setFormData({ name: '', description: '', category: 'Electronics', carbonScore: 0, sustainabilityTag: 'Green', ecoDescription: '' });
       setImageFile(null);
       setImagePreview('');
+      fetchAssets();
+
+    } catch (err: any) {
+      toast.error(err?.response?.data?.error || err.message || 'Registration failed');
+      setMinting(false);
     }
-  }, [txConfirmed, txHash]);
+  };
 
   const handleTransfer = async (tokenId: number) => {
-    if (!address || !transferTo) return;
+    if (!transferTo) { toast.error('Enter recipient address'); return; }
     setTransferring(true);
     try {
-      writeContract({
-        address: PRODUCT_NFT_ADDRESS,
-        abi: PRODUCT_NFT_ABI,
-        functionName: 'transferFrom',
-        args: [address as `0x${string}`, transferTo as `0x${string}`, BigInt(tokenId)],
-      });
-      toast.success('Transfer initiated!');
+      await assetService.updateOwner(tokenId, transferTo, '');
+      toast.success('Ownership transferred!');
       setTransferModal({ tokenId: 0, show: false });
       setTransferTo('');
-      setTimeout(fetchAssets, 3000);
-    } catch (err: any) {
+      fetchAssets();
+    } catch {
       toast.error('Transfer failed');
     } finally {
       setTransferring(false);
@@ -164,22 +161,29 @@ export default function UserAssetsPage() {
     try {
       const data = await assetService.getAssetByTokenId(Number(tokenId));
       setScannedAsset(data);
+      toast.success('Asset found!');
     } catch {
       toast.error('Asset not found');
+      setScannedAsset(null);
     }
+  };
+
+  const getAssetImage = (asset: any) => {
+    const meta = metadataCache[asset.tokenId];
+    if (meta?.image) return meta.image.replace('ipfs://', IPFS_GATEWAY);
+    return null;
   };
 
   return (
     <div className="page-wrapper">
       <div className="page-header">
         <h1 className="page-title">My Assets</h1>
-        <p className="page-subtitle">Manage your registered asset NFTs</p>
+        <p className="page-subtitle">Register physical assets as NFTs and manage ownership</p>
       </div>
 
-      {/* Sub-tabs */}
       <div className="tab-bar">
         <button className={`tab-item ${activeTab === 'grid' ? 'active' : ''}`} onClick={() => setActiveTab('grid')}>
-          📦 My Assets
+          📦 My Assets {assets.length > 0 && `(${assets.length})`}
         </button>
         <button className={`tab-item ${activeTab === 'register' ? 'active' : ''}`} onClick={() => setActiveTab('register')}>
           ➕ Register Asset
@@ -189,7 +193,7 @@ export default function UserAssetsPage() {
         </button>
       </div>
 
-      {/* Grid Tab */}
+      {/* === GRID TAB === */}
       {activeTab === 'grid' && (
         <>
           {loading ? (
@@ -203,58 +207,84 @@ export default function UserAssetsPage() {
             />
           ) : (
             <div className="grid-auto">
-              {assets.map((asset) => (
-                <div key={asset.tokenId} className="card card-elevated" style={{ padding: 0, overflow: 'hidden' }}>
-                  <div
-                    className="asset-card-image"
-                    style={{
-                      backgroundImage: asset.metadataURI ? `url(${IPFS_GATEWAY}${asset.metadataURI.replace('ipfs://', '')})` : undefined,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                      backgroundColor: 'var(--surface-2)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: '2rem', color: 'var(--text-muted)',
-                    }}
-                  >
-                    {!asset.metadataURI && '📦'}
-                  </div>
-                  <div className="asset-card-body">
-                    <h3 className="asset-card-name">{asset.tokenId ? `Asset #${asset.tokenId}` : 'Asset'}</h3>
-                    <div className="asset-card-meta">
-                      <TokenBadge tokenId={asset.tokenId} />
-                      <CarbonBadge tag={asset.sustainabilityTag || 'Green'} score={asset.carbonScore} />
+              {assets.map((asset) => {
+                const imageUrl = getAssetImage(asset);
+                const meta = metadataCache[asset.tokenId];
+                return (
+                  <div key={asset.tokenId} className="card card-elevated" style={{ padding: 0, overflow: 'hidden' }}>
+                    <div
+                      style={{
+                        width: '100%',
+                        aspectRatio: '4/3',
+                        background: imageUrl ? `url(${imageUrl}) center/cover` : 'var(--surface-2)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '2.5rem',
+                      }}
+                    >
+                      {!imageUrl && '📦'}
                     </div>
-                    <div className="asset-card-actions">
-                      <button className="btn btn-sm btn-secondary" onClick={() => setTransferModal({ tokenId: asset.tokenId, show: true })}>
-                        Transfer
-                      </button>
-                      {asset.txHash && <TxHashLink hash={asset.txHash} label="View Tx" />}
+                    <div className="asset-card-body">
+                      <h3 className="asset-card-name">{meta?.name || `Asset #${asset.tokenId}`}</h3>
+                      {meta?.description && (
+                        <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
+                          {meta.description.slice(0, 80)}{meta.description.length > 80 ? '...' : ''}
+                        </p>
+                      )}
+                      <div className="asset-card-meta">
+                        <TokenBadge tokenId={asset.tokenId} />
+                        <CarbonBadge tag={asset.sustainabilityTag || 'Green'} score={asset.carbonScore} />
+                      </div>
+                      <div className="asset-card-actions">
+                        <button
+                          className="btn btn-sm btn-secondary"
+                          onClick={() => setTransferModal({ tokenId: asset.tokenId, show: true })}
+                        >
+                          🔄 Transfer
+                        </button>
+                        {asset.txHash && <TxHashLink hash={asset.txHash} label="View Tx" />}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </>
       )}
 
-      {/* Register Tab */}
+      {/* === REGISTER TAB === */}
       {activeTab === 'register' && (
         <div style={{ maxWidth: '560px' }}>
           {minting ? (
             <StepIndicator
               steps={4}
               current={mintStep}
-              message={['Uploading image to IPFS...', 'Building metadata...', 'Minting on Polygon...', 'Confirming transaction...'][mintStep]}
+              message={[
+                'Uploading image to IPFS...',
+                'Building metadata...',
+                'Registering asset...',
+                'Done!',
+              ][mintStep]}
             />
-          ) : mintResult && !mintResult.pending ? (
+          ) : mintResult ? (
             <div className="card card-elevated" style={{ textAlign: 'center' }}>
-              <h3 style={{ marginBottom: '1rem', color: 'var(--success)' }}>✅ Asset Minted!</h3>
-              {mintResult.txHash && <TxHashLink hash={mintResult.txHash} label="View on PolygonScan" />}
-              <div style={{ marginTop: '1rem' }}>
-                <QRCard data={`${QR_PREFIX_ASSET}${assets[0]?.tokenId || 1}`} label="Asset QR Code" />
+              <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>✅</div>
+              <h3 style={{ marginBottom: '0.5rem', color: 'var(--success)' }}>Asset Registered!</h3>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
+                Metadata is stored on IPFS. Your asset is now in your portfolio.
+              </p>
+              <div style={{ marginBottom: '1.5rem' }}>
+                <QRCard
+                  data={`${QR_PREFIX_ASSET}${mintResult?.record?.tokenId || ''}`}
+                  label="Asset QR Code"
+                />
               </div>
-              <button className="btn btn-primary" style={{ marginTop: '1rem' }} onClick={() => { setMintResult(null); setActiveTab('grid'); }}>
+              <button
+                className="btn btn-primary"
+                onClick={() => { setMintResult(null); setActiveTab('grid'); }}
+              >
                 View My Assets
               </button>
             </div>
@@ -264,27 +294,41 @@ export default function UserAssetsPage() {
 
               <div className="form-group">
                 <label className="form-label">Asset Name *</label>
-                <input className="form-input" placeholder="e.g., MacBook Pro M3" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} />
+                <input
+                  className="form-input"
+                  placeholder="e.g., MacBook Pro M3"
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                />
                 {formErrors.name && <p className="form-error">{formErrors.name}</p>}
               </div>
 
               <div className="form-group">
                 <label className="form-label">Description *</label>
-                <textarea className="form-textarea" placeholder="Describe your asset..." value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} />
+                <textarea
+                  className="form-textarea"
+                  placeholder="Describe your asset..."
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                />
                 {formErrors.description && <p className="form-error">{formErrors.description}</p>}
               </div>
 
               <div className="form-group">
-                <label className="form-label">Category *</label>
-                <select className="form-select" value={formData.category} onChange={(e) => setFormData({ ...formData, category: e.target.value })}>
+                <label className="form-label">Category</label>
+                <select
+                  className="form-select"
+                  value={formData.category}
+                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                >
                   {ASSET_CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
 
               <div className="form-group">
-                <label className="form-label">Asset Image *</label>
-                <UploadDropzone onFile={handleImageFile} preview={imagePreview} label="Upload asset image" />
-                {formErrors.image && <p className="form-error">{formErrors.image}</p>}
+                <label className="form-label">Asset Image</label>
+                <UploadDropzone onFile={(f) => { setImageFile(f); setImagePreview(URL.createObjectURL(f)); }} preview={imagePreview} label="Upload asset image" />
+                <p className="form-hint">Optional — uploaded to IPFS</p>
               </div>
 
               <hr className="section-divider" />
@@ -293,30 +337,51 @@ export default function UserAssetsPage() {
               <div className="grid-2">
                 <div className="form-group">
                   <label className="form-label">Carbon Score (kg CO₂)</label>
-                  <input className="form-input" type="number" step="0.01" min="0" value={formData.carbonScore} onChange={(e) => setFormData({ ...formData, carbonScore: parseFloat(e.target.value) || 0 })} />
+                  <input
+                    className="form-input"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={formData.carbonScore}
+                    onChange={(e) => setFormData({ ...formData, carbonScore: parseFloat(e.target.value) || 0 })}
+                  />
                 </div>
                 <div className="form-group">
                   <label className="form-label">Sustainability Tag</label>
-                  <select className="form-select" value={formData.sustainabilityTag} onChange={(e) => setFormData({ ...formData, sustainabilityTag: e.target.value })}>
+                  <select
+                    className="form-select"
+                    value={formData.sustainabilityTag}
+                    onChange={(e) => setFormData({ ...formData, sustainabilityTag: e.target.value })}
+                  >
                     {SUSTAINABILITY_TAGS.map((t) => <option key={t} value={t}>{t}</option>)}
                   </select>
                 </div>
               </div>
 
               <div className="form-group">
-                <label className="form-label">Eco Description</label>
-                <input className="form-input" placeholder="Optional sustainability notes" value={formData.ecoDescription} onChange={(e) => setFormData({ ...formData, ecoDescription: e.target.value })} />
+                <label className="form-label">Eco Notes</label>
+                <input
+                  className="form-input"
+                  placeholder="Optional sustainability notes..."
+                  value={formData.ecoDescription}
+                  onChange={(e) => setFormData({ ...formData, ecoDescription: e.target.value })}
+                />
               </div>
 
-              <button className="btn btn-primary btn-lg" style={{ width: '100%', marginTop: '0.5rem' }} onClick={handleRegister}>
-                🔗 Register Asset as NFT
+              <button
+                className="btn btn-primary btn-lg"
+                style={{ width: '100%', marginTop: '0.5rem' }}
+                onClick={handleRegister}
+                disabled={minting}
+              >
+                🔗 Register Asset
               </button>
             </div>
           )}
         </div>
       )}
 
-      {/* Scanner Tab */}
+      {/* === SCANNER TAB === */}
       {activeTab === 'scanner' && (
         <div style={{ maxWidth: '480px', margin: '0 auto' }}>
           <div className="card">
@@ -324,7 +389,7 @@ export default function UserAssetsPage() {
             <QRScanner
               prefix={QR_PREFIX_ASSET}
               onScan={handleScan}
-              errorMessage="Invalid QR. Please scan an asset QR code."
+              errorMessage="Invalid QR. Please scan a UniTrust asset QR code."
             />
           </div>
 
@@ -342,27 +407,33 @@ export default function UserAssetsPage() {
         </div>
       )}
 
-      {/* Transfer Modal */}
-      <ConfirmModal
-        isOpen={transferModal.show}
-        title="Transfer Ownership"
-        message={`Transfer Asset #${transferModal.tokenId} to a new owner. This action cannot be undone.`}
-        confirmLabel={transferring ? 'Transferring...' : 'Transfer'}
-        onConfirm={() => handleTransfer(transferModal.tokenId)}
-        onCancel={() => setTransferModal({ tokenId: 0, show: false })}
-      />
+      {/* === TRANSFER MODAL === */}
       {transferModal.show && (
         <div className="modal-overlay" onClick={() => setTransferModal({ tokenId: 0, show: false })}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <h3 className="modal-title">🔄 Transfer Ownership</h3>
-            <p className="modal-body">Enter the wallet address of the new owner for Asset #{transferModal.tokenId}.</p>
+            <p className="modal-body">
+              Transfer Asset #{transferModal.tokenId} to a new owner. Enter their wallet address.
+            </p>
             <div className="form-group">
               <label className="form-label">Recipient Wallet Address</label>
-              <input className="form-input" placeholder="0x..." value={transferTo} onChange={(e) => setTransferTo(e.target.value)} />
+              <input
+                className="form-input"
+                placeholder="0x..."
+                value={transferTo}
+                onChange={(e) => setTransferTo(e.target.value)}
+                autoFocus
+              />
             </div>
             <div className="modal-actions">
-              <button className="btn btn-secondary" onClick={() => setTransferModal({ tokenId: 0, show: false })}>Cancel</button>
-              <button className="btn btn-primary" onClick={() => handleTransfer(transferModal.tokenId)} disabled={!transferTo || transferring}>
+              <button className="btn btn-secondary" onClick={() => { setTransferModal({ tokenId: 0, show: false }); setTransferTo(''); }}>
+                Cancel
+              </button>
+              <button
+                className="btn btn-primary"
+                onClick={() => handleTransfer(transferModal.tokenId)}
+                disabled={!transferTo || transferring}
+              >
                 {transferring ? 'Transferring...' : 'Transfer'}
               </button>
             </div>

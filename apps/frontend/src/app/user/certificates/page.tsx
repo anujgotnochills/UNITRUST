@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAccount } from 'wagmi';
 import { certificateService } from '@/services/certificateService';
 import { profileService } from '@/services/profileService';
@@ -15,16 +15,13 @@ export default function UserCertificatesPage() {
   const { address } = useAccount();
   const [tab, setTab] = useState<'pending' | 'certificates'>('pending');
   const [pendingRequests, setPendingRequests] = useState<any[]>([]);
+  const [allRequests, setAllRequests] = useState<any[]>([]);
   const [certificates, setCertificates] = useState<any[]>([]);
   const [hiddenIds, setHiddenIds] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
   const [instituteProfiles, setInstituteProfiles] = useState<Record<string, any>>({});
 
-  useEffect(() => {
-    if (address) fetchData();
-  }, [address]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     if (!address) return;
     setLoading(true);
     try {
@@ -34,15 +31,17 @@ export default function UserCertificatesPage() {
         certificateService.getHiddenCertificates(address),
       ]);
 
-      const pending = (reqRes.requests || []).filter((r: any) => r.status === 'pending');
+      const allReqs = reqRes.requests || [];
+      const pending = allReqs.filter((r: any) => r.status === 'pending');
+      setAllRequests(allReqs);
       setPendingRequests(pending);
       setCertificates(certRes.certificates || []);
       setHiddenIds(hiddenRes.hiddenTokenIds || []);
 
-      // Fetch institute profiles for display
+      // Fetch institute profiles
       const wallets = new Set<string>();
-      pending.forEach((r: any) => wallets.add(r.instituteWallet));
-      (certRes.certificates || []).forEach((c: any) => wallets.add(c.issuerWallet));
+      allReqs.forEach((r: any) => r.instituteWallet && wallets.add(r.instituteWallet));
+      (certRes.certificates || []).forEach((c: any) => c.issuerWallet && wallets.add(c.issuerWallet));
 
       const profiles: Record<string, any> = {};
       for (const w of wallets) {
@@ -57,7 +56,13 @@ export default function UserCertificatesPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [address]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+
 
   const handleAccept = async (requestId: string) => {
     try {
