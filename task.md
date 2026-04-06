@@ -1,0 +1,27 @@
+# Backend & Blockchain Verification Tasks
+
+- `[/]` **Phase 1: Smart Contracts Local Validation**
+  - `[ ]` Compile Contracts
+  - `[ ]` Test ProductNFT
+  - `[ ]` Test CertificateNFT
+- `[ ]` **Phase 2: Blockchain Deployment & Testnet Integration**
+  - `[ ]` Deploy to Polygon Amoy
+  - `[ ]` Update `addresses.ts` 
+  - `[ ]` Grant Roles
+  - `[ ]` Verify Contracts on Explorer
+- `[ ]` **Phase 3: Backend Database & Profile Setup**
+  - `[ ]` Test DB Connection
+  - `[ ]` Test User Profiles APIs
+  - `[ ]` Test Institute Profiles APIs
+- `[ ]` **Phase 4: IPFS (Pinata) & Metadata Engine**
+  - `[ ]` Test IPFS File Upload
+  - `[ ]` Test Metadata Upload & Calculation
+- `[ ]` **Phase 5: Off-Chain Request State Machine**
+  - `[ ]` Test Create Request API
+  - `[ ]` Test Accept/Reject mutations
+  - `[ ]` Test Asset Data Modeling
+- `[ ]` **Phase 6: Sync Layer & Event Listeners**
+  - `[ ]` Boot Up listeners
+  - `[ ]` Trigger remote test and monitor MongoDB Sync
+- `[ ]` **Phase 7: End-to-End API Integration Wrap**
+  - `[ ]` Verify E2E Flow
