@@ -25,8 +25,15 @@ export default function RoleSelectPage() {
     if (!mounted) return;
     if (!isConnected) {
       router.push('/connect');
+      return;
     }
-  }, [isConnected, mounted, router]);
+    // If they already have a saved role, skip this page and route directly
+    if (role === 'user') {
+      router.push('/dashboard');
+    } else if (role === 'institute') {
+      router.push('/institute/request');
+    }
+  }, [isConnected, role, mounted, router]);
 
   const handleRoleSelect = async (selectedRole: 'user' | 'institute') => {
     if (!address) return;
