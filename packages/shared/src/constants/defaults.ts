@@ -1,3 +1,4 @@
+declare var Buffer: any;
 export const DEFAULT_INSTITUTE_LOGO = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" fill="none">
   <rect width="120" height="120" rx="60" fill="#E2E8F0"/>
   <path d="M60 30L30 50V90H50V70H70V90H90V50L60 30Z" fill="#94A3B8"/>

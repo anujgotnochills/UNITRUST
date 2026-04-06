@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Express } from 'express';
 import cors from 'cors';
 import { connectDB } from './config/db';
 import { env } from './config/env';
@@ -13,7 +13,7 @@ import profileRoutes from './routes/profiles';
 import ipfsRoutes from './routes/ipfs';
 import hiddenRoutes from './routes/hidden';
 
-const app = express();
+const app: Express = express();
 
 // Middleware
 app.use(cors({ origin: ['http://localhost:3000', 'http://localhost:3001'], credentials: true }));

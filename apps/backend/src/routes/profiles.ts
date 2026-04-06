@@ -6,7 +6,7 @@ import {
   getInstituteProfile,
 } from '../controllers/profileController';
 
-const router = Router();
+const router: import('express').Router = Router();
 
 router.post('/user', createOrUpdateUserProfile);
 router.get('/user/:wallet', getUserProfile);
