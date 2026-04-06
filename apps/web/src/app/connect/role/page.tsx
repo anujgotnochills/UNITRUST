@@ -12,10 +12,11 @@ import toast from 'react-hot-toast';
 export default function RoleSelectPage() {
   const router = useRouter();
   const { isConnected, address } = useAccount();
-  const { role, setRole } = useRoleStore();
+  const { role, setRole, getRoleForWallet, setRoleForWallet } = useRoleStore();
   const [mounted, setMounted] = useState(false);
   const [hoveredRole, setHoveredRole] = useState<string | null>(null);
   const [isLoadingProfile, setIsLoadingProfile] = useState(false);
+  const [checkingProfile, setCheckingProfile] = useState(true);
 
   useEffect(() => {
     setMounted(true);
@@ -25,13 +26,55 @@ export default function RoleSelectPage() {
     if (!mounted) return;
     if (!isConnected) {
       router.push('/connect');
+      return;
     }
-  }, [isConnected, mounted, router]);
+    if (!address) return;
+
+    // Check if this wallet already has a registered profile
+    const checkExisting = async () => {
+      setCheckingProfile(true);
+      // Check cached role first
+      const cached = getRoleForWallet(address);
+      if (cached === 'user') {
+        setRole(cached);
+        router.push('/dashboard');
+        return;
+      }
+      if (cached === 'institute') {
+        setRole(cached);
+        router.push('/institute/request');
+        return;
+      }
+
+      // Check backend
+      try {
+        const userRes = await profileService.getUserProfile(address);
+        if (userRes?.profile) {
+          setRoleForWallet(address, 'user');
+          router.push('/dashboard');
+          return;
+        }
+      } catch {}
+
+      try {
+        const instRes = await profileService.getInstituteProfile(address);
+        if (instRes?.profile) {
+          setRoleForWallet(address, 'institute');
+          router.push('/institute/request');
+          return;
+        }
+      } catch {}
+
+      // No existing profile — allow role selection
+      setCheckingProfile(false);
+    };
+    checkExisting();
+  }, [isConnected, address, mounted, router]);
 
   const handleRoleSelect = async (selectedRole: 'user' | 'institute') => {
     if (!address) return;
     
-    setRole(selectedRole);
+    setRoleForWallet(address, selectedRole);
     if (selectedRole === 'user') {
       router.push('/dashboard');
     } else {
@@ -50,7 +93,6 @@ export default function RoleSelectPage() {
           router.push('/institute/register');
         } else {
           console.error('Error fetching institute profile:', err);
-          // Fallback to register if there's an error (e.g. backend down or first time)
           router.push('/institute/register');
         }
       } finally {
@@ -60,6 +102,17 @@ export default function RoleSelectPage() {
   };
 
   if (!mounted || !isConnected) return null;
+
+  if (checkingProfile) {
+    return (
+      <div className="min-h-screen bg-[#FAF7F5] flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="w-10 h-10 rounded-full border-4 border-black/10 border-t-accent-pink animate-spin mx-auto" />
+          <p className="text-muted font-medium">Checking your profile...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#FAF7F5] flex flex-col relative overflow-hidden">
@@ -98,7 +151,7 @@ export default function RoleSelectPage() {
               Choose Your Role
             </h1>
             <p className="text-lg text-muted font-medium max-w-md mx-auto">
-              Select how you want to use UniTrust. You can always switch later.
+              Select how you want to use UniTrust. This choice is permanent for this wallet.
             </p>
           </div>
 
@@ -192,7 +245,7 @@ export default function RoleSelectPage() {
       {/* Footer */}
       <footer className="relative z-10 p-6 text-center">
         <p className="text-xs text-muted">
-          Your role determines your dashboard experience. Both roles use the same wallet.
+          Your role is permanently bound to your wallet address. Both roles use the same wallet.
         </p>
       </footer>
     </div>

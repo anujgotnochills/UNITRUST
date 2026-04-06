@@ -5,13 +5,14 @@ import { useAccount } from 'wagmi';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useRouter } from 'next/navigation';
 import { useRoleStore } from '@/store/roleStore';
+import { profileService } from '@/services/profileService';
 import { Wallet, ArrowLeft, Shield, Fingerprint, Zap } from 'lucide-react';
 import Link from 'next/link';
 
 export default function ConnectPage() {
   const router = useRouter();
-  const { isConnected } = useAccount();
-  const { role } = useRoleStore();
+  const { isConnected, address } = useAccount();
+  const { role, setRole, getRoleForWallet, setRoleForWallet } = useRoleStore();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -20,17 +21,47 @@ export default function ConnectPage() {
 
   useEffect(() => {
     if (!mounted) return;
-    if (isConnected) {
-      // If already connected and has a role, go straight to appropriate page
-      if (role === 'user') {
+    if (!isConnected || !address) return;
+
+    const checkExistingRole = async () => {
+      // 1. Check if we already have a cached role for this wallet
+      const cachedRole = getRoleForWallet(address);
+      if (cachedRole === 'user') {
+        setRole(cachedRole);
         router.push('/dashboard');
-      } else if (role === 'institute') {
-        router.push('/institute/request');
-      } else {
-        router.push('/connect/role');
+        return;
       }
-    }
-  }, [isConnected, role, mounted, router]);
+      if (cachedRole === 'institute') {
+        setRole(cachedRole);
+        router.push('/institute/request');
+        return;
+      }
+
+      // 2. No cached role — check the backend for existing profiles
+      try {
+        const userRes = await profileService.getUserProfile(address);
+        if (userRes?.profile) {
+          setRoleForWallet(address, 'user');
+          router.push('/dashboard');
+          return;
+        }
+      } catch {}
+
+      try {
+        const instRes = await profileService.getInstituteProfile(address);
+        if (instRes?.profile) {
+          setRoleForWallet(address, 'institute');
+          router.push('/institute/request');
+          return;
+        }
+      } catch {}
+
+      // 3. No profile found anywhere — show role selection
+      router.push('/connect/role');
+    };
+
+    checkExistingRole();
+  }, [isConnected, address, mounted, router]);
 
   if (!mounted) return null;
 
