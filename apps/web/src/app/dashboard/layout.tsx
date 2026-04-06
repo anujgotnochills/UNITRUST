@@ -10,7 +10,6 @@ import {
   LayoutDashboard, 
   Box, 
   PlusCircle, 
-  Scan, 
   FileCheck, 
   Clock, 
   ShieldCheck, 

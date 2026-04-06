@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAccount, useDisconnect } from 'wagmi';
 import { useRouter } from 'next/navigation';
 import { useRoleStore } from '@/store/roleStore';
@@ -11,10 +11,10 @@ import { CERTIFICATE_TYPES, SUSTAINABILITY_TAGS, QR_PREFIX_ASSET, QR_PREFIX_CERT
 import toast from 'react-hot-toast';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import { Html5Qrcode } from 'html5-qrcode';
 import {
   Building2, Send, Clock, CheckCircle2, XCircle, Award,
-  LogOut, ArrowLeft, Wallet, FilePlus, Files, Loader2, ShieldCheck
+  LogOut, ArrowLeft, Wallet, FilePlus, Files, Loader2, ShieldCheck, Upload
 } from 'lucide-react';
 
 const STATUS_COLORS: Record<string, string> = {
@@ -54,7 +54,8 @@ export default function InstituteRequestPage() {
   const [verifyTokenId, setVerifyTokenId] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
   const [verifyResult, setVerifyResult] = useState<any>(null);
-  const [scannerOpen, setScannerOpen] = useState(false);
+  const [uploadingQr, setUploadingQr] = useState(false);
+  const qrFileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -191,33 +192,34 @@ export default function InstituteRequestPage() {
     } catch { return null; }
   }
 
-  // ── QR Scanner ──
-  useEffect(() => {
-    if (!scannerOpen || activeTab !== 'verify') return;
-    const scanner = new Html5QrcodeScanner(
-      'inst-verify-reader',
-      { fps: 10, qrbox: { width: 280, height: 280 } },
-      false
-    );
-    scanner.render(
-      (decodedText) => {
-        let tokenIdStr = decodedText;
-        if (decodedText.startsWith(QR_PREFIX_CERT)) tokenIdStr = decodedText.replace(QR_PREFIX_CERT, '');
-        if (decodedText.startsWith(QR_PREFIX_ASSET)) tokenIdStr = decodedText.replace(QR_PREFIX_ASSET, '');
-        const extracted = tokenIdStr.match(/\d+/)?.[0];
-        if (extracted) {
-          setVerifyTokenId(extracted);
-          setScannerOpen(false);
-          scanner.clear().catch(() => {});
-          runCertVerify(extracted);
-        } else {
-          toast.error('Invalid QR code format');
-        }
-      },
-      () => {}
-    );
-    return () => { scanner.clear().catch(() => {}); };
-  }, [scannerOpen, activeTab]);
+  // ── QR File Upload ──
+  const handleQrUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingQr(true);
+    try {
+      const html5Qrcode = new Html5Qrcode('inst-qr-temp-canvas');
+      const decodedText = await html5Qrcode.scanFile(file, true);
+
+      let tokenIdStr = decodedText;
+      if (decodedText.startsWith(QR_PREFIX_CERT)) tokenIdStr = decodedText.replace(QR_PREFIX_CERT, '');
+      if (decodedText.startsWith(QR_PREFIX_ASSET)) tokenIdStr = decodedText.replace(QR_PREFIX_ASSET, '');
+      const extracted = tokenIdStr.match(/\d+/)?.[0];
+      if (extracted) {
+        setVerifyTokenId(extracted);
+        toast.success(`Token ID #${extracted} extracted from QR`);
+        await runCertVerify(extracted);
+      } else {
+        toast.error('Could not extract a Token ID from this QR code');
+      }
+    } catch {
+      toast.error('Could not read QR code from image. Please try a clearer image.');
+    } finally {
+      setUploadingQr(false);
+      if (qrFileRef.current) qrFileRef.current.value = '';
+    }
+  };
 
   // ── Certificate verification ──
   const runCertVerify = async (tokenIdStr: string) => {
@@ -332,7 +334,7 @@ export default function InstituteRequestPage() {
               )}
             </button>
             <button
-              onClick={() => { setActiveTab('verify'); setScannerOpen(false); setVerifyResult(null); }}
+              onClick={() => { setActiveTab('verify'); setVerifyResult(null); }}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold transition-all ${
                 activeTab === 'verify'
                   ? 'bg-foreground text-background shadow-sm'
@@ -542,6 +544,9 @@ export default function InstituteRequestPage() {
           {/* Verify Certificate Tab */}
           {activeTab === 'verify' && (
             <div className="max-w-2xl mx-auto space-y-8">
+              {/* Hidden element required by html5-qrcode for file scanning */}
+              <div id="inst-qr-temp-canvas" style={{ display: 'none' }} />
+
               <div className="bg-surface rounded-[32px] border border-black/[0.1] shadow-xl p-10">
                 <form onSubmit={handleCertVerify} className="space-y-6">
                   <div className="space-y-2">
@@ -567,33 +572,33 @@ export default function InstituteRequestPage() {
                   </button>
                 </form>
 
-                {/* QR Scanner Toggle */}
+                {/* QR Upload */}
                 <div className="mt-8">
                   <div className="flex items-center gap-4 w-full px-2 mb-4">
                     <div className="h-px bg-black/10 flex-1"></div>
                     <span className="text-xs font-bold text-muted uppercase tracking-widest">OR</span>
                     <div className="h-px bg-black/10 flex-1"></div>
                   </div>
-                  {!scannerOpen ? (
-                    <button
-                      type="button"
-                      onClick={() => setScannerOpen(true)}
-                      className="w-full flex items-center justify-center gap-2 py-4 border-2 border-white/20 text-foreground rounded-2xl font-bold text-lg hover:border-black/30 transition-all font-display"
-                    >
-                      📸 Scan or Upload QR Image
-                    </button>
-                  ) : (
-                    <div className="w-full">
-                      <div id="inst-verify-reader" className="w-full rounded-2xl overflow-hidden border-2 border-white/20 bg-background"></div>
-                      <button
-                        type="button"
-                        onClick={() => setScannerOpen(false)}
-                        className="mt-4 w-full flex items-center justify-center gap-2 py-3 bg-red-50 text-red-600 rounded-xl font-bold text-sm hover:bg-red-100 transition-all"
-                      >
-                        Close Scanner
-                      </button>
-                    </div>
-                  )}
+                  <input
+                    ref={qrFileRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleQrUpload}
+                    className="hidden"
+                    id="inst-qr-file-input"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => qrFileRef.current?.click()}
+                    disabled={uploadingQr}
+                    className="w-full flex items-center justify-center gap-2 py-4 border-2 border-dashed border-white/20 text-foreground rounded-2xl font-bold text-lg hover:border-black/30 hover:bg-black/[0.02] transition-all font-display disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {uploadingQr ? (
+                      <><div className="w-5 h-5 border-2 border-foreground/20 border-t-foreground rounded-full animate-spin" /> Reading QR...</>
+                    ) : (
+                      <><Upload className="w-5 h-5" /> Upload QR Image</>
+                    )}
+                  </button>
                 </div>
               </div>
 

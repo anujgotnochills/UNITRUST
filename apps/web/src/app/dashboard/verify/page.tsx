@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { usePublicClient } from 'wagmi';
 import { PRODUCT_NFT_ADDRESS, PRODUCT_NFT_ABI, CERTIFICATE_NFT_ADDRESS, CERTIFICATE_NFT_ABI } from '@/lib/contracts';
 import { assetService } from '@/services/assetService';
-import { Html5QrcodeScanner } from 'html5-qrcode';
+import { Html5Qrcode } from 'html5-qrcode';
 import { QR_PREFIX_ASSET, QR_PREFIX_CERT } from '@/lib/constants';
 import toast from 'react-hot-toast';
+import { Upload } from 'lucide-react';
 
 function resolveIpfs(uri: string): string {
   if (!uri) return '';
@@ -26,37 +27,40 @@ export default function VerifyPage() {
   const [inputId, setInputId] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
   const [result, setResult] = useState<any>(null);
-  const [scannerOpen, setScannerOpen] = useState(false);
+  const [uploadingQr, setUploadingQr] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const publicClient = usePublicClient();
 
-  useEffect(() => {
-    if (!scannerOpen) return;
-    const scanner = new Html5QrcodeScanner(
-      'verify-reader',
-      { fps: 10, qrbox: { width: 300, height: 300 } },
-      /* verbose= */ false
-    );
-    scanner.render(
-      (decodedText) => {
-        let tokenIdStr = decodedText;
-        if (decodedText.startsWith(QR_PREFIX_ASSET)) tokenIdStr = decodedText.replace(QR_PREFIX_ASSET, '');
-        if (decodedText.startsWith(QR_PREFIX_CERT)) tokenIdStr = decodedText.replace(QR_PREFIX_CERT, '');
-        
-        const extractedId = tokenIdStr.match(/\d+/)?.[0];
-        if (extractedId) {
-            setInputId(extractedId);
-            setScannerOpen(false);
-            scanner.clear().catch(() => {});
-            executeVerification(extractedId);
-        } else {
-            toast.error("Invalid QR format");
-        }
-      },
-      () => {} // silence errors
-    );
-    return () => { scanner.clear().catch(() => {}); };
-  }, [scannerOpen]);
+  const handleQrUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingQr(true);
+    try {
+      const html5Qrcode = new Html5Qrcode('qr-temp-canvas');
+      const decodedText = await html5Qrcode.scanFile(file, true);
+
+      let tokenIdStr = decodedText;
+      if (decodedText.startsWith(QR_PREFIX_ASSET)) tokenIdStr = decodedText.replace(QR_PREFIX_ASSET, '');
+      if (decodedText.startsWith(QR_PREFIX_CERT)) tokenIdStr = decodedText.replace(QR_PREFIX_CERT, '');
+
+      const extractedId = tokenIdStr.match(/\d+/)?.[0];
+      if (extractedId) {
+        setInputId(extractedId);
+        toast.success(`Token ID #${extractedId} extracted from QR`);
+        await executeVerification(extractedId);
+      } else {
+        toast.error('Could not extract a Token ID from this QR code');
+      }
+    } catch {
+      toast.error('Could not read QR code from image. Please try a clearer image.');
+    } finally {
+      setUploadingQr(false);
+      // Reset file input so the same file can be re-uploaded
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
 
   const handleVerify = async (e: React.FormEvent) => {
      e.preventDefault();
@@ -98,7 +102,7 @@ export default function VerifyPage() {
              // Fallback: Check MongoDB backend for Gasless / Simulated assets
              try {
                 const resultObj = await assetService.getAssetByTokenId(Number(tokenId));
-                const dbAsset = resultObj?.asset || resultObj; // Handle `{asset:...}` or raw asset
+                const dbAsset = resultObj?.asset || resultObj;
                 if (dbAsset && dbAsset.ownerWallet) {
                     const metadata = await fetchMetadata(dbAsset.metadataURI);
                     setResult({ type: 'Protocol Asset (Off-Chain)', owner: dbAsset.ownerWallet, uri: dbAsset.metadataURI, tokenId: Number(tokenId), metadata });
@@ -129,7 +133,7 @@ export default function VerifyPage() {
                      abi: CERTIFICATE_NFT_ABI,
                      functionName: 'getIssuer',
                      args: [tokenId]
-                 }).catch(() => null); // getIssuer / issuerOf fallback
+                 }).catch(() => null);
 
                  const metadata = await fetchMetadata(uri as string);
 
@@ -151,6 +155,9 @@ export default function VerifyPage() {
 
   return (
     <div className="space-y-10 max-w-2xl mx-auto py-10">
+      {/* Hidden element required by html5-qrcode for file scanning */}
+      <div id="qr-temp-canvas" style={{ display: 'none' }} />
+
       <div className="text-center space-y-4">
         <h2 className="text-5xl font-display font-black text-foreground tracking-tighter">Verify Authenticity</h2>
         <p className="text-muted text-xl font-medium">Verify any on-chain Token ID instantly.</p>
@@ -187,26 +194,26 @@ export default function VerifyPage() {
                <div className="h-px bg-black/10 flex-1"></div>
             </div>
             
-            {!scannerOpen ? (
-                <button 
-                  type="button"
-                  onClick={() => setScannerOpen(true)}
-                  className="w-full flex items-center justify-center gap-2 py-4 border-2 border-white/20 text-foreground rounded-2xl font-bold text-lg hover:border-black/30 transition-all font-display"
-                >
-                  📸 Scan or Upload QR Image
-                </button>
-            ) : (
-                <div className="w-full">
-                    <div id="verify-reader" className="w-full rounded-2xl overflow-hidden border-2 border-white/20 bg-background"></div>
-                    <button 
-                      type="button"
-                      onClick={() => setScannerOpen(false)}
-                      className="mt-4 w-full flex items-center justify-center gap-2 py-3 bg-red-50 text-red-600 rounded-xl font-bold text-sm hover:bg-red-100 transition-all"
-                    >
-                      Close Scanner
-                    </button>
-                </div>
-            )}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleQrUpload}
+              className="hidden"
+              id="qr-file-input"
+            />
+            <button 
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploadingQr}
+              className="w-full flex items-center justify-center gap-2 py-4 border-2 border-dashed border-white/20 text-foreground rounded-2xl font-bold text-lg hover:border-black/30 hover:bg-black/[0.02] transition-all font-display disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {uploadingQr ? (
+                <><div className="w-5 h-5 border-2 border-foreground/20 border-t-foreground rounded-full animate-spin" /> Reading QR...</>
+              ) : (
+                <><Upload className="w-5 h-5" /> Upload QR Image</>
+              )}
+            </button>
         </div>
       </div>
       
@@ -214,7 +221,7 @@ export default function VerifyPage() {
         <div className="grid grid-cols-2 gap-6 pt-6">
            <div className="p-6 rounded-[32px] bg-surface border border-white/10 flex items-center gap-4">
               <div className="w-10 h-10 rounded-full bg-accent-pink/10 flex items-center justify-center text-accent-pink font-bold">1</div>
-              <span className="text-sm font-bold text-foreground opacity-60">Enter the cryptographic Token ID</span>
+              <span className="text-sm font-bold text-foreground opacity-60">Enter Token ID or upload QR</span>
            </div>
            <div className="p-6 rounded-[32px] bg-surface border border-white/10 flex items-center gap-4">
               <div className="w-10 h-10 rounded-full bg-accent-pink/10 flex items-center justify-center text-accent-pink font-bold">2</div>

@@ -7,7 +7,6 @@ export const ROUTES = {
   DASHBOARD: '/dashboard',
   ASSETS: '/dashboard/assets',
   REGISTER_ASSET: '/dashboard/assets/register',
-  SCAN_QR: '/dashboard/assets/scan',
   CERTIFICATES: '/dashboard/certificates',
   PENDING_REQUESTS: '/dashboard/certificates/pending',
   VERIFY: '/dashboard/verify',
