@@ -122,6 +122,7 @@ export const DecentralisedTrust = () => {
   );
 
   return (
+    <div className="decentralised-trust-wrapper">
     <section 
       ref={sectionRef} 
       className="relative w-full overflow-hidden text-[var(--color-text-primary)]"
@@ -171,5 +172,6 @@ export const DecentralisedTrust = () => {
         </div>
       </div>
     </section>
+    </div>
   );
 };
