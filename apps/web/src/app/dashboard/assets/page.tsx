@@ -4,9 +4,9 @@ import { useAccount } from 'wagmi';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { assetService } from '@/services/assetService';
 import Link from 'next/link';
-import { PlusCircle, QrCode, ArrowRightLeft, X, ExternalLink } from 'lucide-react';
+import { PlusCircle, QrCode, ArrowRightLeft, X, ExternalLink, Download } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { QRCodeSVG } from 'qrcode.react';
+import { QRCodeCanvas } from 'qrcode.react';
 import { IPFS_GATEWAY, QR_PREFIX_ASSET } from '@/lib/constants';
 import toast from 'react-hot-toast';
 
@@ -46,13 +46,22 @@ export default function MyAssetsPage() {
     });
   }, [assets]);
 
+  const downloadQR = (id: string, name: string) => {
+    const canvas = document.getElementById(id) as HTMLCanvasElement;
+    if (!canvas) return;
+    const pngUrl = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+    const downloadLink = document.createElement("a");
+    downloadLink.href = pngUrl;
+    downloadLink.download = `${name}-QR.png`;
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    document.body.removeChild(downloadLink);
+  };
+
   // Transfer modal
   const [transferModal, setTransferModal] = useState<{ show: boolean; tokenId: number } | null>(null);
   const [transferTo, setTransferTo] = useState('');
   const [transferring, setTransferring] = useState(false);
-
-  // QR modal
-  const [qrModal, setQrModal] = useState<{ show: boolean; tokenId: number } | null>(null);
 
   const handleTransfer = async () => {
     if (!transferModal || !transferTo.trim()) return toast.error('Enter recipient address');
@@ -102,79 +111,110 @@ export default function MyAssetsPage() {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-5">
           {assets.map((asset: any) => {
             const meta = metadataMap[asset.tokenId];
             const imageUrl = meta?.image ? resolveIpfs(meta.image) : '';
 
             return (
-              <div key={asset.tokenId} className="bg-surface rounded-[24px] border border-black/[0.05] shadow-sm overflow-hidden hover:shadow-md transition-shadow flex flex-col">
-                {/* Image */}
-                <div className="aspect-[4/3] bg-background relative overflow-hidden">
-                  {imageUrl ? (
-                    <img src={imageUrl} alt={meta?.name || 'Asset'} className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-5xl opacity-20">📦</div>
-                  )}
-                  {/* Sustainability badge */}
-                  <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold tracking-wide ${
-                    asset.sustainabilityTag === 'Green' ? 'bg-accent-green/90 text-background' :
-                    asset.sustainabilityTag === 'Neutral' ? 'bg-amber-400/90 text-background' :
-                    'bg-red-500/90 text-background'
-                  }`}>
-                    {asset.sustainabilityTag}
-                  </div>
-                </div>
-
-                {/* Card Body */}
-                <div className="p-5 flex flex-col gap-3 flex-1">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="font-black text-foreground text-base leading-tight">
-                        {meta?.name || `Asset #${asset.tokenId}`}
-                      </h3>
-                      {meta?.description && (
-                        <p className="text-muted text-xs mt-1 line-clamp-2">{meta.description}</p>
+              <div key={asset.tokenId} className="group perspective-1000 hover:z-10">
+                <div className="relative w-full h-full preserve-3d transition-transform duration-700 will-change-transform group-hover:rotate-y-180">
+                  
+                  {/* Front side */}
+                  <div className="relative backface-hidden shining-card bg-surface rounded-[24px] border border-black/[0.05] shadow-sm flex flex-col overflow-hidden h-full">
+                    {/* Image */}
+                    <div className="aspect-[4/3] bg-background relative overflow-hidden">
+                      {imageUrl ? (
+                        <img src={imageUrl} alt={meta?.name || 'Asset'} className="w-full h-full object-cover" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-5xl opacity-20">📦</div>
                       )}
+                      {/* Sustainability badge */}
+                      <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold tracking-wide ${
+                        asset.sustainabilityTag === 'Green' ? 'bg-accent-green/90 text-background' :
+                        asset.sustainabilityTag === 'Neutral' ? 'bg-amber-400/90 text-background' :
+                        'bg-red-500/90 text-background'
+                      }`}>
+                        {asset.sustainabilityTag}
+                      </div>
                     </div>
-                    <span className="bg-black/5 px-2 py-0.5 rounded-full text-xs font-bold text-muted uppercase shrink-0">
-                      #{asset.tokenId}
-                    </span>
+
+                    {/* Card Body */}
+                    <div className="p-4 flex flex-col gap-3 flex-1">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="font-black text-foreground text-base leading-tight">
+                            {meta?.name || `Asset #${asset.tokenId}`}
+                          </h3>
+                          {meta?.description && (
+                            <p className="text-muted text-xs mt-1 line-clamp-2">{meta.description}</p>
+                          )}
+                        </div>
+                        <span className="bg-black/5 px-2 py-0.5 rounded-full text-xs font-bold text-muted uppercase shrink-0">
+                          #{asset.tokenId}
+                        </span>
+                      </div>
+
+                      {/* Carbon Info */}
+                      <div className="flex items-center justify-between p-3 rounded-xl bg-black/[0.03]">
+                        <span className="text-xs font-bold text-muted uppercase tracking-widest">Carbon Impact</span>
+                        <span className="font-black text-lg font-display">
+                          {asset.carbonScore} <span className="text-xs font-medium text-muted">kg CO₂e</span>
+                        </span>
+                      </div>
+
+                      {/* IPFS Link */}
+                      <a
+                        href={resolveIpfs(asset.metadataURI)}
+                        target="_blank" rel="noreferrer"
+                        className="flex items-center gap-1.5 text-xs text-accent-pink font-mono bg-accent-pink/5 hover:bg-accent-pink/10 transition-colors px-3 py-2 rounded-xl truncate"
+                      >
+                        <ExternalLink className="w-3 h-3 shrink-0" />
+                        <span className="truncate">{asset.metadataURI}</span>
+                      </a>
+
+                      {/* Actions */}
+                      <div className="flex gap-2 mt-auto pt-2 relative z-20">
+                        <button
+                          onClick={() => { setTransferModal({ show: true, tokenId: asset.tokenId }); setTransferTo(''); }}
+                          className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl border-2 border-white/20 text-sm font-bold hover:border-border hover:bg-foreground hover:text-background transition-all bg-surface"
+                        >
+                          <ArrowRightLeft className="w-4 h-4" /> Transfer
+                        </button>
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Carbon Info */}
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-black/[0.03]">
-                    <span className="text-xs font-bold text-muted uppercase tracking-widest">Carbon Impact</span>
-                    <span className="font-black text-lg font-display">
-                      {asset.carbonScore} <span className="text-xs font-medium text-muted">kg CO₂e</span>
-                    </span>
+                  {/* Back side */}
+                  <div className="absolute inset-0 backface-hidden rotate-y-180 bg-surface rounded-[24px] border border-black/[0.05] shadow-lg flex flex-col items-center justify-center p-4 space-y-4 overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-accent-pink/5 to-accent-blue/5 pointer-events-none" />
+                    
+                    <div className="relative z-10 bg-background p-3 rounded-2xl border border-black/5 shadow-inner">
+                      <QRCodeCanvas
+                        id={`qr-asset-${asset.tokenId}`}
+                        value={`${QR_PREFIX_ASSET}${asset.tokenId}`}
+                        size={220}
+                        level="H"
+                        includeMargin
+                      />
+                    </div>
+                    
+                    <div className="text-center relative z-10">
+                      <h3 className="font-black text-lg font-display mb-1">Asset QR</h3>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                          downloadQR(`qr-asset-${asset.tokenId}`, `Asset-${asset.tokenId}`);
+                        }}
+                        className="flex items-center justify-center gap-1.5 mx-auto mt-2 px-4 py-2 bg-foreground text-background rounded-full text-xs font-bold hover:scale-105 active:scale-95 transition-all"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        Save QR
+                      </button>
+                    </div>
                   </div>
-
-                  {/* IPFS Link */}
-                  <a
-                    href={resolveIpfs(asset.metadataURI)}
-                    target="_blank" rel="noreferrer"
-                    className="flex items-center gap-1.5 text-xs text-accent-pink font-mono bg-accent-pink/5 hover:bg-accent-pink/10 transition-colors px-3 py-2 rounded-xl truncate"
-                  >
-                    <ExternalLink className="w-3 h-3 shrink-0" />
-                    <span className="truncate">{asset.metadataURI}</span>
-                  </a>
-
-                  {/* Actions */}
-                  <div className="flex gap-2 mt-auto pt-2">
-                    <button
-                      onClick={() => setQrModal({ show: true, tokenId: asset.tokenId })}
-                      className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl border-2 border-white/20 text-sm font-bold hover:border-border hover:bg-foreground hover:text-background transition-all"
-                    >
-                      <QrCode className="w-4 h-4" /> QR
-                    </button>
-                    <button
-                      onClick={() => { setTransferModal({ show: true, tokenId: asset.tokenId }); setTransferTo(''); }}
-                      className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl border-2 border-white/20 text-sm font-bold hover:border-border hover:bg-foreground hover:text-background transition-all"
-                    >
-                      <ArrowRightLeft className="w-4 h-4" /> Transfer
-                    </button>
-                  </div>
+                  
                 </div>
               </div>
             );
@@ -182,28 +222,7 @@ export default function MyAssetsPage() {
         </div>
       )}
 
-      {/* QR Modal */}
-      {qrModal?.show && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setQrModal(null)}>
-          <div className="bg-surface rounded-[32px] p-10 max-w-sm w-full shadow-2xl text-center space-y-6" onClick={(e) => e.stopPropagation()}>
-            <div className="flex justify-between items-center">
-              <h3 className="font-black text-xl font-display">Asset QR Code</h3>
-              <button onClick={() => setQrModal(null)} className="w-8 h-8 rounded-full bg-black/5 flex items-center justify-center hover:bg-black/10">
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-            <div className="flex justify-center p-6 bg-background rounded-2xl">
-              <QRCodeSVG
-                value={`${QR_PREFIX_ASSET}${qrModal.tokenId}`}
-                size={200}
-                level="H"
-                includeMargin
-              />
-            </div>
-            <p className="text-muted text-sm">Scan to verify asset #{qrModal.tokenId} on UniTrust</p>
-          </div>
-        </div>
-      )}
+
 
       {/* Transfer Modal */}
       {transferModal?.show && (
