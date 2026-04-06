@@ -89,27 +89,7 @@ export const DecentralisedTrust = () => {
         duration: 1,
       });
 
-      // Background color transition from Dark -> Light
-      const pinDistance = getScrollAmount() * -1;
-      const lightTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionEl,
-          start: () => `top+=${pinDistance} top`, 
-          end: () => `top+=${pinDistance + window.innerHeight * 0.7} top`,
-          scrub: 1,
-          invalidateOnRefresh: true,
-        },
-      });
 
-      lightTl.to([document.documentElement, document.body], {
-        '--color-bg': '#FAF7F5',
-        '--page-bg': '#FAF7F5',
-        '--color-text-primary': '#1A1A1A',
-        '--dot-color': '#1A1A1A',
-        backgroundColor: '#FAF7F5',
-        color: '#1A1A1A',
-        duration: 1,
-      });
 
       return () => {
         // Cleanup variables and inline styles
