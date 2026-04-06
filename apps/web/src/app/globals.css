@@ -1,0 +1,185 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-bg: #FAF7F5;
+    --color-surface: #FFFFFF;
+    --color-surface-light: #F5F2F0;
+    --color-border: #E5E5E5;
+    --color-border-light: #F0F0F0;
+    --color-accent-green: #00FF88;
+    --color-accent-purple: #7C3AED;
+    --color-accent-blue: #00B8FF;
+    --color-accent-pink: #FF8DA1;
+    --color-text-primary: #1A1A1A;
+    --color-text-secondary: #666666;
+    --color-text-muted: #888888;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: auto;
+    background-color: var(--color-bg);
+    color: var(--color-text-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-color: var(--color-bg);
+    font-family: var(--font-body), system-ui, sans-serif;
+    color: var(--color-text-primary);
+  }
+
+  ::selection {
+    background: rgba(255, 141, 161, 0.3);
+    color: #1A1A1A;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-bg);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #CCC;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #999;
+  }
+}
+
+@layer components {
+  .gradient-text {
+    background: linear-gradient(135deg, #00FF88 0%, #00B8FF 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Dot Grid Background over the whole page behind elements */
+  .dot-grid-bg {
+    position: relative;
+    background-color: var(--color-bg);
+    background-image: radial-gradient(#1A1A1A 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .dot-grid-bg::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    /* Optional radial fade if we want center clear */
+    /* background: radial-gradient(circle at center, transparent 0%, var(--color-bg) 100%); */
+  }
+
+  .glass {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+
+  .glass-heavy {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .section-padding {
+    @apply py-24 md:py-32 lg:py-48;
+  }
+
+  .content-width {
+    @apply max-w-content mx-auto px-5 md:px-8 lg:px-12 relative z-10;
+  }
+
+  .card-base {
+    @apply rounded-2xl border border-black/5 bg-surface transition-all duration-300 shadow-sm;
+  }
+
+  .card-base:hover {
+    @apply border-black/10 shadow-md;
+  }
+
+  .animated-underline {
+    position: relative;
+    display: inline-block;
+  }
+  .animated-underline::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--color-text-primary);
+    transition: width 0.3s ease;
+  }
+  .animated-underline:hover::after {
+    width: 100%;
+  }
+
+}
+
+@layer utilities {
+  .will-change-transform {
+    will-change: transform;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Lenis smooth scroll */
+html.lenis, html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+@layer utilities {
+  .will-change-transform {
+    will-change: transform;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Lenis smooth scroll */
+html.lenis, html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
