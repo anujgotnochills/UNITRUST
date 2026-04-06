@@ -1,14 +1,32 @@
 'use client';
 
 import Link from 'next/link';
-import { useAccount } from 'wagmi';
+import { useAccount, useDisconnect } from 'wagmi';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
 import { useRoleStore } from '@/store/roleStore';
 import { ROUTES } from '@/lib/constants';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export function Navbar() {
   const { isConnected } = useAccount();
+  const { disconnect } = useDisconnect();
   const { role, clearRole } = useRoleStore();
+  const router = useRouter();
+
+  // Watch for disconnect to fully reset state and redirect
+  useEffect(() => {
+    if (!isConnected && role) {
+      clearRole();
+      router.push(ROUTES.HOME);
+    }
+  }, [isConnected, role, clearRole, router]);
+
+  const handleLogout = () => {
+    disconnect();
+    clearRole();
+    router.push(ROUTES.HOME);
+  };
 
   const navLinks = role === 'user'
     ? [
@@ -57,11 +75,11 @@ export function Navbar() {
         )}
         {isConnected && role && (
           <button
-            onClick={clearRole}
+            onClick={handleLogout}
             className="btn btn-sm btn-secondary"
-            style={{ fontSize: '0.75rem' }}
+            style={{ fontSize: '0.75rem', borderColor: 'var(--error)', color: 'var(--error)', background: 'rgba(239, 68, 68, 0.05)' }}
           >
-            Switch Role
+            Logout
           </button>
         )}
         <ConnectButton
