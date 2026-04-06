@@ -88,18 +88,29 @@ export const DecentralisedTrust = () => {
         });
       };
 
+      const pinDuration = getScrollAmount() * -0.85;
+
+      // Theme Toggle Trigger: Activate dark theme smoothly when section enters viewport
+      // and revert when returning to the hero section. Symmetrical on both ends.
+      ScrollTrigger.create({
+        trigger: sectionEl,
+        start: 'top 60%',
+        end: () => `+=${pinDuration + window.innerHeight * 0.4}`,
+        onEnter: snapToDark,
+        onLeave: snapToLight,
+        onEnterBack: snapToDark,
+        onLeaveBack: snapToLight,
+      });
+
+      // Horizontal Scroll & Pin Trigger
       ScrollTrigger.create({
         trigger: sectionEl,
         start: 'top top',
-        end: () => `+=${getScrollAmount() * -0.85}`,
+        end: () => `+=${pinDuration}`,
         pin: true,
         animation: tween,
         scrub: 1.5,
         invalidateOnRefresh: true,
-        onEnter:      snapToDark,
-        onLeave:      snapToLight,
-        onEnterBack:  snapToDark,
-        onLeaveBack:  snapToLight,
       });
 
 

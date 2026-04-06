@@ -174,26 +174,6 @@ export function FeaturesBento() {
         },
       });
 
-      // Background color transition from Dark -> Light on Built Different
-      const lightTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 100%', // Start as soon as the section enters from the bottom
-          end: 'top 60%',    // Finish early so the Built Different text is completely readable
-          scrub: 1,
-        },
-      });
-
-      lightTl.to([document.documentElement, document.body], {
-        '--color-bg': '#FAF7F5',
-        '--page-bg': '#FAF7F5',
-        '--color-text-primary': '#1A1A1A',
-        '--dot-color': '#1A1A1A',
-        backgroundColor: '#FAF7F5',
-        color: '#1A1A1A',
-        duration: 1,
-      });
-
     }, sectionRef);
 
     return () => ctx.revert();
