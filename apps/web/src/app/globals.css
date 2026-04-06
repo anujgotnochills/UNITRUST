@@ -71,9 +71,10 @@
   /* Dot Grid Background over the whole page behind elements */
   .dot-grid-bg {
     position: relative;
-    background-color: var(--color-bg);
-    background-image: radial-gradient(#1A1A1A 1px, transparent 1px);
+    background-color: var(--page-bg, var(--color-bg));
+    background-image: radial-gradient(var(--dot-color, #1A1A1A) 1px, transparent 1px);
     background-size: 60px 60px;
+    background-attachment: fixed;
   }
 
   .dot-grid-bg::before {

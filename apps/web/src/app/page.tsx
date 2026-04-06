@@ -2,7 +2,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { FloatingSidebar } from '@/components/layout/FloatingSidebar';
 import { Footer } from '@/components/layout/Footer';
 import { Hero } from '@/components/sections/Hero';
-import { ProblemSolution } from '@/components/sections/ProblemSolution';
+import { DecentralisedTrust } from '@/components/sections/DecentralisedTrust';
 import { FeaturesBento } from '@/components/sections/FeaturesBento';
 import { UseCases } from '@/components/sections/UseCases';
 import { Roadmap } from '@/components/sections/Roadmap';
@@ -15,7 +15,7 @@ export default function Home() {
       <FloatingSidebar />
       <main>
         <Hero />
-        <ProblemSolution />
+        <DecentralisedTrust />
         <FeaturesBento />
         <UseCases />
         <Roadmap />
