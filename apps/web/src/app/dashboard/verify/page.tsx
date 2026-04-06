@@ -1,9 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { usePublicClient } from 'wagmi';
 import { PRODUCT_NFT_ADDRESS, PRODUCT_NFT_ABI, CERTIFICATE_NFT_ADDRESS, CERTIFICATE_NFT_ABI } from '@/lib/contracts';
 import { assetService } from '@/services/assetService';
+import { Html5QrcodeScanner } from 'html5-qrcode';
+import { QR_PREFIX_ASSET, QR_PREFIX_CERT } from '@/lib/constants';
 import toast from 'react-hot-toast';
 
 function resolveIpfs(uri: string): string {
@@ -24,19 +26,52 @@ export default function VerifyPage() {
   const [inputId, setInputId] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
   const [result, setResult] = useState<any>(null);
+  const [scannerOpen, setScannerOpen] = useState(false);
   
   const publicClient = usePublicClient();
+
+  useEffect(() => {
+    if (!scannerOpen) return;
+    const scanner = new Html5QrcodeScanner(
+      'verify-reader',
+      { fps: 10, qrbox: { width: 300, height: 300 } },
+      /* verbose= */ false
+    );
+    scanner.render(
+      (decodedText) => {
+        let tokenIdStr = decodedText;
+        if (decodedText.startsWith(QR_PREFIX_ASSET)) tokenIdStr = decodedText.replace(QR_PREFIX_ASSET, '');
+        if (decodedText.startsWith(QR_PREFIX_CERT)) tokenIdStr = decodedText.replace(QR_PREFIX_CERT, '');
+        
+        const extractedId = tokenIdStr.match(/\d+/)?.[0];
+        if (extractedId) {
+            setInputId(extractedId);
+            setScannerOpen(false);
+            scanner.clear().catch(() => {});
+            executeVerification(extractedId);
+        } else {
+            toast.error("Invalid QR format");
+        }
+      },
+      () => {} // silence errors
+    );
+    return () => { scanner.clear().catch(() => {}); };
+  }, [scannerOpen]);
 
   const handleVerify = async (e: React.FormEvent) => {
      e.preventDefault();
      if (!inputId) return;
+     await executeVerification(inputId);
+  };
+
+  const executeVerification = async (targetId: string) => {
      if (!publicClient) return toast.error('Web3 connection unavailable');
 
      setIsVerifying(true);
      setResult(null);
 
      try {
-         const tokenId = BigInt(inputId);
+         const tokenId = BigInt(targetId);
          // Try Asset
          try {
              const owner = await publicClient.readContract({
@@ -144,6 +179,35 @@ export default function VerifyPage() {
              )}
           </button>
         </form>
+
+        <div className="mt-8 flex flex-col items-center">
+            <div className="flex items-center gap-4 w-full px-2 mb-4">
+               <div className="h-px bg-black/10 flex-1"></div>
+               <span className="text-xs font-bold text-muted uppercase tracking-widest">OR</span>
+               <div className="h-px bg-black/10 flex-1"></div>
+            </div>
+            
+            {!scannerOpen ? (
+                <button 
+                  type="button"
+                  onClick={() => setScannerOpen(true)}
+                  className="w-full flex items-center justify-center gap-2 py-4 border-2 border-black/10 text-[#1A1A1A] rounded-2xl font-bold text-lg hover:border-black/30 transition-all font-display"
+                >
+                  📸 Scan or Upload QR Image
+                </button>
+            ) : (
+                <div className="w-full">
+                    <div id="verify-reader" className="w-full rounded-2xl overflow-hidden border-2 border-black/10 bg-[#FAF7F5]"></div>
+                    <button 
+                      type="button"
+                      onClick={() => setScannerOpen(false)}
+                      className="mt-4 w-full flex items-center justify-center gap-2 py-3 bg-red-50 text-red-600 rounded-xl font-bold text-sm hover:bg-red-100 transition-all"
+                    >
+                      Close Scanner
+                    </button>
+                </div>
+            )}
+        </div>
       </div>
       
       {!result ? (

@@ -29,7 +29,6 @@ const sidebarLinks = [
     items: [
       { title: 'My Assets', href: '/dashboard/assets', icon: Box },
       { title: 'Register Asset', href: '/dashboard/assets/register', icon: PlusCircle },
-      { title: 'Scan QR', href: '/dashboard/assets/scan', icon: Scan },
     ]
   },
   {
