@@ -189,11 +189,11 @@ export function FrameAnimation() {
           {/* Text */}
           <div ref={textRef} className="space-y-6 order-1 lg:order-2">
             <div className="frame-text-line">
-              <span className="text-xs font-mono text-[#1A1A1A] font-bold uppercase tracking-widest">
+              <span className="text-xs font-mono text-foreground font-bold uppercase tracking-widest">
                 Token Infrastructure
               </span>
             </div>
-            <h2 className="frame-text-line text-4xl md:text-5xl lg:text-6xl font-display font-black text-[#1A1A1A] tracking-tight leading-[1.05]">
+            <h2 className="frame-text-line text-4xl md:text-5xl lg:text-6xl font-display font-black text-foreground tracking-tight leading-[1.05]">
               Build.<br />
               <span>Stake.</span><br />
               Innovate.
@@ -210,7 +210,7 @@ export function FrameAnimation() {
                 { label: 'Burned', value: '2.1M' },
               ].map((s) => (
                 <div key={s.label}>
-                  <div className="text-xl font-display font-black text-[#1A1A1A] tracking-tight">{s.value}</div>
+                  <div className="text-xl font-display font-black text-foreground tracking-tight">{s.value}</div>
                   <div className="text-xs text-muted font-medium">{s.label}</div>
                 </div>
               ))}

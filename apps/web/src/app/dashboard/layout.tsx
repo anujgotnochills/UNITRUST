@@ -95,15 +95,15 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-[#FAF7F5] flex">
+    <div className="min-h-screen bg-background dot-grid-bg flex">
       {/* Sidebar */}
-      <aside className="w-64 border-r border-[#1A1A1A]/10 bg-white flex flex-col fixed inset-y-0 z-50">
-        <div className="p-6 border-b border-[#1A1A1A]/10 flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-[#1A1A1A] flex items-center justify-center">
-            <span className="text-white font-bold text-sm font-display">U</span>
+      <aside className="w-64 border-r border-border/10 bg-surface flex flex-col fixed inset-y-0 z-50">
+        <div className="p-6 border-b border-border/10 flex items-center gap-2">
+          <div className="w-8 h-8 rounded-lg bg-foreground flex items-center justify-center">
+            <span className="text-background font-bold text-sm font-display">U</span>
           </div>
-          <span className="text-xl font-display font-black tracking-tight text-[#1A1A1A]">
-            Uni<span className="text-accent-pink">Trust</span>
+          <span className="text-xl font-display font-black tracking-tight text-foreground">
+            UniTrust
           </span>
         </div>
 
@@ -124,8 +124,8 @@ export default function DashboardLayout({
                           href={link.href}
                           className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                             isActive
-                              ? 'bg-[#1A1A1A] text-white'
-                              : 'text-muted hover:text-[#1A1A1A] hover:bg-gray-100'
+                              ? 'bg-foreground text-background'
+                              : 'text-muted hover:text-foreground hover:bg-gray-100'
                           }`}
                         >
                           <link.icon className="w-4 h-4" />
@@ -141,8 +141,8 @@ export default function DashboardLayout({
                     href={section.href!}
                     className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                       pathname === section.href
-                         ? 'bg-[#1A1A1A] text-white'
-                         : 'text-muted hover:text-[#1A1A1A] hover:bg-gray-100'
+                         ? 'bg-foreground text-background'
+                         : 'text-muted hover:text-foreground hover:bg-gray-100'
                     }`}
                   >
                     <section.icon className="w-4 h-4" />
@@ -154,7 +154,7 @@ export default function DashboardLayout({
           ))}
         </div>
 
-        <div className="p-4 border-t border-[#1A1A1A]/10">
+        <div className="p-4 border-t border-border/10">
           <button 
             onClick={handleDisconnect}
             className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm font-medium text-red-500 hover:bg-red-50 transition-colors"
@@ -168,20 +168,20 @@ export default function DashboardLayout({
       {/* Main Content */}
       <main className="flex-1 ml-64 flex flex-col min-h-screen">
         {/* Top Navbar */}
-        <header className="h-16 border-b border-[#1A1A1A]/10 bg-white/50 backdrop-blur-md sticky top-0 z-40 flex items-center justify-between px-8">
-          <h1 className="font-display font-black text-xl text-[#1A1A1A] tracking-tight">
+        <header className="h-16 border-b border-border/10 bg-surface/50 backdrop-blur-md sticky top-0 z-40 flex items-center justify-between px-8">
+          <h1 className="font-display font-black text-xl text-foreground tracking-tight">
             Dashboard
           </h1>
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent-pink/10 border border-accent-pink/20">
-              <div className="w-2 h-2 rounded-full bg-accent-pink animate-pulse" />
-              <span className="text-xs font-semibold text-accent-pink tracking-wide">
-                Amoy Testnet Active
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/5 border border-black/10">
+              <div className="w-2 h-2 rounded-full bg-black animate-pulse" />
+              <span className="text-xs font-semibold text-foreground tracking-wide">
+                Amoy Testnet
               </span>
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-[#1A1A1A]/10 shadow-sm">
-              <Wallet className="w-4 h-4 text-[#1A1A1A]" />
-              <span className="text-sm font-mono font-medium text-[#1A1A1A]">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-surface border border-border/10 shadow-sm">
+              <Wallet className="w-4 h-4 text-foreground" />
+              <span className="text-sm font-mono font-medium text-foreground">
                 {address?.slice(0, 6)}...{address?.slice(-4)}
               </span>
             </div>

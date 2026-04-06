@@ -83,8 +83,8 @@ export function Footer() {
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent-green to-accent-blue flex items-center justify-center">
                 <span className="text-black font-bold text-sm font-display">U</span>
               </div>
-              <span className="text-lg font-display font-black tracking-tight text-[#1A1A1A]">
-                Uni<span className="text-accent-pink">Trust</span>
+              <span className="text-xl font-display font-black tracking-tight text-white">
+                UniTrust
               </span>
             </a>
             <p className="text-sm text-muted leading-relaxed max-w-[240px]">
@@ -103,7 +103,7 @@ export function Footer() {
                   <li key={link.label}>
                     <a
                       href={link.href}
-                      className="footer-link text-sm text-muted hover:text-[#1A1A1A] transition-colors duration-200 animated-underline"
+                      className="footer-link text-sm text-muted hover:text-foreground transition-colors duration-200 animated-underline"
                     >
                       {link.label}
                     </a>
@@ -126,9 +126,9 @@ export function Footer() {
             </a>
           </div>
           <div className="flex items-center gap-6 text-xs text-muted">
-            <a href="#" className="hover:text-[#1A1A1A] transition-colors">Terms</a>
-            <a href="#" className="hover:text-[#1A1A1A] transition-colors">Privacy</a>
-            <a href="#" className="hover:text-[#1A1A1A] transition-colors">Cookies</a>
+            <a href="#" className="hover:text-foreground transition-colors">Terms</a>
+            <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
+            <a href="#" className="hover:text-foreground transition-colors">Cookies</a>
           </div>
         </div>
       </div>

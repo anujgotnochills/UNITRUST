@@ -50,11 +50,11 @@ export function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-[100svh] flex flex-col items-center justify-center pt-32 pb-16"
+      className="relative min-h-[100svh] flex flex-col items-center justify-center pt-20 pb-16"
     >
       <div className="relative z-10 w-full max-w-6xl mx-auto px-6 text-center flex-1 flex flex-col items-center justify-center">
         <div ref={headlineRef} className="mb-8 w-full">
-          <h1 className="font-display font-black text-[#1A1A1A] leading-[1.05] tracking-tight" style={{ fontSize: 'clamp(80px, 15vw, 220px)' }}>
+          <h1 className="font-display font-black text-foreground leading-[1.05] tracking-tight" style={{ fontSize: 'clamp(80px, 15vw, 220px)' }}>
             <div className="hero-word">Build</div>
             <div className="hero-word">Brilliant</div>
           </h1>
@@ -62,7 +62,7 @@ export function Hero() {
 
         <p
           ref={subRef}
-          className="text-xl md:text-2xl text-[#1A1A1A] max-w-3xl mx-auto mb-16 leading-snug"
+          className="text-xl md:text-2xl text-foreground max-w-3xl mx-auto mb-16 leading-snug"
           style={{ letterSpacing: '-0.01em' }}
         >
           UniTrust combines blockchain with real-world assets.<br className="hidden md:block" />
@@ -74,7 +74,7 @@ export function Hero() {
       <div ref={ctaRef} className="w-full relative z-10 pb-8 flex justify-center">
         <Link
           href="/connect"
-          className="group bg-[#1A1A1A] text-white px-10 py-5 rounded-full flex items-center gap-3 text-lg font-bold hover:bg-black transition-all hover:shadow-2xl hover:shadow-black/20 hover:scale-[1.02] active:scale-[0.98]"
+          className="group bg-foreground text-background px-10 py-5 rounded-full flex items-center gap-3 text-lg font-bold hover:bg-black transition-all hover:shadow-2xl hover:shadow-black/20 hover:scale-[1.02] active:scale-[0.98]"
         >
           Launch App
           <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

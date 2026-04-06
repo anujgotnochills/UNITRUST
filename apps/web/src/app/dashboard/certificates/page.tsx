@@ -98,11 +98,11 @@ export default function MyCertificatesPage() {
       {/* ── Header ──────────────────────────────────────────────── */}
       <div className="flex justify-between items-end">
         <div>
-          <h2 className="text-4xl font-display font-black text-[#1A1A1A] tracking-tight">My Certificates</h2>
+          <h2 className="text-4xl font-display font-black text-foreground tracking-tight">My Certificates</h2>
           <p className="text-muted mt-2 text-lg">Your soulbound credentials, permanently on-chain.</p>
         </div>
         {totalCount > 0 && (
-          <span className="flex items-center gap-2 px-4 py-2 bg-[#1A1A1A] text-white rounded-full text-sm font-bold">
+          <span className="flex items-center gap-2 px-4 py-2 bg-foreground text-background rounded-full text-sm font-bold">
             <Sparkles className="w-4 h-4" />
             {totalCount} Certificate{totalCount !== 1 ? 's' : ''}
           </span>
@@ -111,13 +111,13 @@ export default function MyCertificatesPage() {
 
       {/* ── Loading ──────────────────────────────────────────────── */}
       {isLoading ? (
-        <div className="bg-white rounded-[32px] border border-black/[0.05] shadow-sm p-24 flex items-center justify-center">
-          <div className="w-8 h-8 rounded-full border-4 border-black/10 border-t-accent-pink animate-spin" />
+        <div className="bg-surface rounded-[32px] border border-black/[0.05] shadow-sm p-24 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-full border-4 border-white/20 border-t-accent-pink animate-spin" />
         </div>
 
       ) : totalCount === 0 ? (
         /* ── Empty state ───────────────────────────────────────── */
-        <div className="bg-white rounded-[32px] border border-black/[0.05] shadow-sm p-32 text-center">
+        <div className="bg-surface rounded-[32px] border border-black/[0.05] shadow-sm p-32 text-center">
           <div className="max-w-xs mx-auto space-y-4">
             <p className="text-5xl">🎓</p>
             <p className="text-muted text-lg font-medium">No certificates yet.</p>
@@ -179,29 +179,29 @@ export default function MyCertificatesPage() {
             return (
               <div
                 key={`req-${req._id}`}
-                className="bg-white rounded-[24px] border border-black/[0.05] shadow-sm overflow-hidden hover:shadow-lg transition-all duration-300"
+                className="bg-surface rounded-[24px] border border-black/[0.05] shadow-sm overflow-hidden hover:shadow-lg transition-all duration-300"
               >
                 {/* Top colour bar */}
                 <div className="h-1.5 w-full" style={{ background: gradientBar }} />
 
                 {/* Header */}
-                <div className="p-5 border-b border-black/5 flex items-center gap-4">
+                <div className="p-5 border-b border-white/10 flex items-center gap-4">
                   {instituteLogo ? (
                     <img
                       src={instituteLogo}
                       alt={instituteName}
-                      className="w-12 h-12 rounded-full object-cover border border-black/10 shrink-0"
+                      className="w-12 h-12 rounded-full object-cover border border-white/20 shrink-0"
                     />
                   ) : (
-                    <div className="w-12 h-12 rounded-2xl bg-[#1A1A1A] flex items-center justify-center text-white font-black text-xl shrink-0">
+                    <div className="w-12 h-12 rounded-2xl bg-foreground flex items-center justify-center text-background font-black text-xl shrink-0">
                       🏫
                     </div>
                   )}
 
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-bold text-muted uppercase tracking-widest truncate">{instituteName}</p>
-                    <h3 className="font-black text-base text-[#1A1A1A] leading-tight mt-0.5 truncate">{title}</h3>
-                    <p className="text-xs text-muted mt-0.5">To: <span className="font-semibold text-[#1A1A1A]">{studentName}</span></p>
+                    <h3 className="font-black text-base text-foreground leading-tight mt-0.5 truncate">{title}</h3>
+                    <p className="text-xs text-muted mt-0.5">To: <span className="font-semibold text-foreground">{studentName}</span></p>
                   </div>
 
                   <div className="flex flex-col items-end gap-1.5 shrink-0">
@@ -229,7 +229,7 @@ export default function MyCertificatesPage() {
                     ].map(([label, val]) => (
                       <div key={label} className="bg-black/[0.03] p-3 rounded-xl">
                         <p className="text-xs font-bold text-muted uppercase tracking-widest mb-1">{label}</p>
-                        <p className="font-semibold text-[#1A1A1A] truncate">{val}</p>
+                        <p className="font-semibold text-foreground truncate">{val}</p>
                       </div>
                     ))}
                   </div>
@@ -322,18 +322,18 @@ export default function MyCertificatesPage() {
               const sustainTag = getAttr(attrs, 'Sustainability Tag');
 
               return (
-                <div key={`nft-${cert.tokenId}`} className="bg-white rounded-[24px] border border-black/[0.05] shadow-sm overflow-hidden hover:shadow-lg transition-all duration-300">
+                <div key={`nft-${cert.tokenId}`} className="bg-surface rounded-[24px] border border-black/[0.05] shadow-sm overflow-hidden hover:shadow-lg transition-all duration-300">
                   <div className="h-1.5 w-full" style={{ background: 'linear-gradient(90deg, #FF8DA1, #e05c7a, #a78bfa)' }} />
 
-                  <div className="p-5 border-b border-black/5 flex items-center gap-4">
+                  <div className="p-5 border-b border-white/10 flex items-center gap-4">
                     {instituteLogo && instituteLogo !== '—' ? (
-                      <img src={instituteLogo} alt="Institute" className="w-12 h-12 rounded-full object-cover border border-black/10 shrink-0" />
+                      <img src={instituteLogo} alt="Institute" className="w-12 h-12 rounded-full object-cover border border-white/20 shrink-0" />
                     ) : (
-                      <div className="w-12 h-12 rounded-2xl bg-[#1A1A1A] flex items-center justify-center text-white font-black text-xl shrink-0">🏫</div>
+                      <div className="w-12 h-12 rounded-2xl bg-foreground flex items-center justify-center text-background font-black text-xl shrink-0">🏫</div>
                     )}
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-bold text-muted uppercase tracking-widest truncate">{instituteName}</p>
-                      <h3 className="font-black text-base text-[#1A1A1A] leading-tight mt-0.5 truncate">{title}</h3>
+                      <h3 className="font-black text-base text-foreground leading-tight mt-0.5 truncate">{title}</h3>
                     </div>
                     <div className="flex flex-col items-end gap-1.5 shrink-0">
                       <div className="flex items-center gap-1.5 px-2.5 py-1 bg-green-100 rounded-full">
@@ -352,7 +352,7 @@ export default function MyCertificatesPage() {
                       {[['Soulbound Token', `#${cert.tokenId}`], ['Type', certType], ['Course', course], ['Issued', issueDate]].map(([label, val]) => (
                         <div key={label} className="bg-black/[0.03] p-3 rounded-xl">
                           <p className="text-xs font-bold text-muted uppercase tracking-widest mb-1">{label}</p>
-                          <p className="font-semibold text-[#1A1A1A] truncate">{val}</p>
+                          <p className="font-semibold text-foreground truncate">{val}</p>
                         </div>
                       ))}
                     </div>

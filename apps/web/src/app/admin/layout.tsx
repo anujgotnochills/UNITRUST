@@ -24,15 +24,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="w-20 h-20 rounded-3xl bg-red-500/10 flex items-center justify-center mx-auto">
             <Wallet className="w-10 h-10 text-red-400" />
           </div>
-          <h1 className="text-3xl font-display font-black text-white tracking-tight">
+          <h1 className="text-3xl font-display font-black text-background tracking-tight">
             Wallet Not Connected
           </h1>
-          <p className="text-white/50 text-lg">
+          <p className="text-background/50 text-lg">
             You need to connect your admin wallet to access this panel.
           </p>
           <Link
             href="/connect"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black rounded-full font-bold hover:bg-gray-200 transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-surface text-black rounded-full font-bold hover:bg-gray-200 transition-colors"
           >
             Connect Wallet
           </Link>
@@ -49,19 +49,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <div className="w-20 h-20 rounded-3xl bg-red-500/10 flex items-center justify-center mx-auto">
             <ShieldAlert className="w-10 h-10 text-red-400" />
           </div>
-          <h1 className="text-3xl font-display font-black text-white tracking-tight">
+          <h1 className="text-3xl font-display font-black text-background tracking-tight">
             Access Denied
           </h1>
-          <p className="text-white/50 text-lg">
+          <p className="text-background/50 text-lg">
             This admin panel is restricted. Your wallet does not have permission to access it.
           </p>
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
-            <p className="text-xs text-white/30 uppercase tracking-widest font-bold mb-1">Connected Wallet</p>
-            <p className="text-sm text-white/60 font-mono break-all">{address}</p>
+          <div className="bg-surface/5 border border-white/10 rounded-2xl p-4">
+            <p className="text-xs text-background/30 uppercase tracking-widest font-bold mb-1">Connected Wallet</p>
+            <p className="text-sm text-background/60 font-mono break-all">{address}</p>
           </div>
           <Link
             href="/"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-white/10 text-white rounded-full font-bold hover:bg-white/20 transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-surface/10 text-background rounded-full font-bold hover:bg-surface/20 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Home

@@ -120,20 +120,20 @@ export default function PendingRequestsPage() {
   return (
     <div className="space-y-8">
       <div>
-        <h2 className="text-4xl font-display font-black text-[#1A1A1A] tracking-tight">Pending Requests</h2>
+        <h2 className="text-4xl font-display font-black text-foreground tracking-tight">Pending Requests</h2>
         <p className="text-muted mt-2 text-lg">Certificate issuance requests — accept, reject, or issue an NFT.</p>
       </div>
 
       {isLoading ? (
-        <div className="bg-white rounded-[32px] border border-black/[0.05] shadow-sm p-24 flex items-center justify-center">
-          <div className="w-8 h-8 rounded-full border-4 border-black/10 border-t-accent-pink animate-spin" />
+        <div className="bg-surface rounded-[32px] border border-black/[0.05] shadow-sm p-24 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-full border-4 border-white/20 border-t-accent-pink animate-spin" />
         </div>
       ) : activeRequests.length === 0 ? (
-        <div className="bg-white rounded-[32px] border border-black/[0.05] shadow-sm p-32 text-center">
+        <div className="bg-surface rounded-[32px] border border-black/[0.05] shadow-sm p-32 text-center">
           <div className="max-w-xs mx-auto space-y-4">
             <p className="text-4xl">📭</p>
             <p className="text-muted font-medium text-lg">No pending requests.</p>
-            <p className="text-sm text-muted">Accepted certificates appear in <span className="font-bold text-[#1A1A1A]">My Certificates</span>.</p>
+            <p className="text-sm text-muted">Accepted certificates appear in <span className="font-bold text-foreground">My Certificates</span>.</p>
           </div>
         </div>
       ) : (
@@ -148,7 +148,7 @@ export default function PendingRequestsPage() {
             return (
               <div
                 key={req._id}
-                className={`bg-white rounded-[24px] border shadow-sm p-6 flex flex-col gap-4 ${
+                className={`bg-surface rounded-[24px] border shadow-sm p-6 flex flex-col gap-4 ${
                   req.status === 'accepted' ? 'border-blue-200' : 'border-black/[0.05]'
                 }`}
               >
@@ -189,7 +189,7 @@ export default function PendingRequestsPage() {
                     <button
                       disabled={isBusyAccept || isBusyReject}
                       onClick={() => handleAccept(req._id)}
-                      className="flex-1 flex items-center justify-center gap-2 py-3 bg-[#1A1A1A] text-white rounded-xl font-bold hover:bg-black transition-colors disabled:opacity-50"
+                      className="flex-1 flex items-center justify-center gap-2 py-3 bg-foreground text-background rounded-xl font-bold hover:bg-black transition-colors disabled:opacity-50"
                     >
                       {isBusyAccept ? <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
                       Accept
@@ -219,7 +219,7 @@ export default function PendingRequestsPage() {
                   <button
                     disabled={!!busy}
                     onClick={() => handleIssueCertificate(req)}
-                    className="w-full flex items-center justify-center gap-2 py-4 bg-accent-pink text-white rounded-xl font-bold hover:opacity-90 transition-opacity disabled:opacity-50"
+                    className="w-full flex items-center justify-center gap-2 py-4 bg-accent-pink text-background rounded-xl font-bold hover:opacity-90 transition-opacity disabled:opacity-50"
                     style={{ background: 'linear-gradient(135deg, #FF8DA1, #e05c7a)' }}
                   >
                     {isBusyIssue ? (

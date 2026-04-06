@@ -75,12 +75,12 @@ export default function MyAssetsPage() {
     <div className="space-y-8">
       <div className="flex justify-between items-end">
         <div>
-          <h2 className="text-4xl font-display font-black text-[#1A1A1A] tracking-tight">My Assets</h2>
+          <h2 className="text-4xl font-display font-black text-foreground tracking-tight">My Assets</h2>
           <p className="text-muted mt-2 text-lg">Manage all your tokenized physical and digital assets.</p>
         </div>
         <Link
           href="/dashboard/assets/register"
-          className="flex items-center gap-2 px-6 py-3 bg-[#1A1A1A] text-white rounded-full font-bold hover:bg-black transition-transform active:scale-[0.98]"
+          className="flex items-center gap-2 px-6 py-3 bg-foreground text-background rounded-full font-bold hover:bg-black transition-transform active:scale-[0.98]"
         >
           <PlusCircle className="w-5 h-5" />
           Register Asset
@@ -88,15 +88,15 @@ export default function MyAssetsPage() {
       </div>
 
       {isLoading ? (
-        <div className="bg-white rounded-[32px] border border-black/[0.05] shadow-sm p-24 flex items-center justify-center">
-          <div className="w-8 h-8 rounded-full border-4 border-black/10 border-t-accent-pink animate-spin" />
+        <div className="bg-surface rounded-[32px] border border-black/[0.05] shadow-sm p-24 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-full border-4 border-white/20 border-t-accent-pink animate-spin" />
         </div>
       ) : assets.length === 0 ? (
-        <div className="bg-white rounded-[32px] border border-black/[0.05] shadow-sm p-24 text-center border-dashed">
+        <div className="bg-surface rounded-[32px] border border-black/[0.05] shadow-sm p-24 text-center border-dashed">
           <div className="max-w-xs mx-auto space-y-4">
             <p className="text-5xl">📦</p>
             <p className="text-muted text-lg font-medium">No assets yet. Register your first asset to get started.</p>
-            <Link href="/dashboard/assets/register" className="inline-block px-6 py-3 bg-[#1A1A1A] text-white rounded-full font-bold text-sm mt-2">
+            <Link href="/dashboard/assets/register" className="inline-block px-6 py-3 bg-foreground text-background rounded-full font-bold text-sm mt-2">
               Register Asset →
             </Link>
           </div>
@@ -108,9 +108,9 @@ export default function MyAssetsPage() {
             const imageUrl = meta?.image ? resolveIpfs(meta.image) : '';
 
             return (
-              <div key={asset.tokenId} className="bg-white rounded-[24px] border border-black/[0.05] shadow-sm overflow-hidden hover:shadow-md transition-shadow flex flex-col">
+              <div key={asset.tokenId} className="bg-surface rounded-[24px] border border-black/[0.05] shadow-sm overflow-hidden hover:shadow-md transition-shadow flex flex-col">
                 {/* Image */}
-                <div className="aspect-[4/3] bg-[#FAF7F5] relative overflow-hidden">
+                <div className="aspect-[4/3] bg-background relative overflow-hidden">
                   {imageUrl ? (
                     <img src={imageUrl} alt={meta?.name || 'Asset'} className="w-full h-full object-cover" />
                   ) : (
@@ -118,9 +118,9 @@ export default function MyAssetsPage() {
                   )}
                   {/* Sustainability badge */}
                   <div className={`absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold tracking-wide ${
-                    asset.sustainabilityTag === 'Green' ? 'bg-accent-green/90 text-white' :
-                    asset.sustainabilityTag === 'Neutral' ? 'bg-amber-400/90 text-white' :
-                    'bg-red-500/90 text-white'
+                    asset.sustainabilityTag === 'Green' ? 'bg-accent-green/90 text-background' :
+                    asset.sustainabilityTag === 'Neutral' ? 'bg-amber-400/90 text-background' :
+                    'bg-red-500/90 text-background'
                   }`}>
                     {asset.sustainabilityTag}
                   </div>
@@ -130,7 +130,7 @@ export default function MyAssetsPage() {
                 <div className="p-5 flex flex-col gap-3 flex-1">
                   <div className="flex justify-between items-start">
                     <div>
-                      <h3 className="font-black text-[#1A1A1A] text-base leading-tight">
+                      <h3 className="font-black text-foreground text-base leading-tight">
                         {meta?.name || `Asset #${asset.tokenId}`}
                       </h3>
                       {meta?.description && (
@@ -164,13 +164,13 @@ export default function MyAssetsPage() {
                   <div className="flex gap-2 mt-auto pt-2">
                     <button
                       onClick={() => setQrModal({ show: true, tokenId: asset.tokenId })}
-                      className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl border-2 border-black/10 text-sm font-bold hover:border-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-white transition-all"
+                      className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl border-2 border-white/20 text-sm font-bold hover:border-border hover:bg-foreground hover:text-background transition-all"
                     >
                       <QrCode className="w-4 h-4" /> QR
                     </button>
                     <button
                       onClick={() => { setTransferModal({ show: true, tokenId: asset.tokenId }); setTransferTo(''); }}
-                      className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl border-2 border-black/10 text-sm font-bold hover:border-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-white transition-all"
+                      className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl border-2 border-white/20 text-sm font-bold hover:border-border hover:bg-foreground hover:text-background transition-all"
                     >
                       <ArrowRightLeft className="w-4 h-4" /> Transfer
                     </button>
@@ -185,14 +185,14 @@ export default function MyAssetsPage() {
       {/* QR Modal */}
       {qrModal?.show && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setQrModal(null)}>
-          <div className="bg-white rounded-[32px] p-10 max-w-sm w-full shadow-2xl text-center space-y-6" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-surface rounded-[32px] p-10 max-w-sm w-full shadow-2xl text-center space-y-6" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-center">
               <h3 className="font-black text-xl font-display">Asset QR Code</h3>
               <button onClick={() => setQrModal(null)} className="w-8 h-8 rounded-full bg-black/5 flex items-center justify-center hover:bg-black/10">
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <div className="flex justify-center p-6 bg-[#FAF7F5] rounded-2xl">
+            <div className="flex justify-center p-6 bg-background rounded-2xl">
               <QRCodeSVG
                 value={`${QR_PREFIX_ASSET}${qrModal.tokenId}`}
                 size={200}
@@ -208,7 +208,7 @@ export default function MyAssetsPage() {
       {/* Transfer Modal */}
       {transferModal?.show && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={() => setTransferModal(null)}>
-          <div className="bg-white rounded-[32px] p-10 max-w-md w-full shadow-2xl space-y-6" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-surface rounded-[32px] p-10 max-w-md w-full shadow-2xl space-y-6" onClick={(e) => e.stopPropagation()}>
             <div className="flex justify-between items-center">
               <h3 className="font-black text-xl font-display">Transfer Asset #{transferModal.tokenId}</h3>
               <button onClick={() => setTransferModal(null)} className="w-8 h-8 rounded-full bg-black/5 flex items-center justify-center hover:bg-black/10">
@@ -220,20 +220,20 @@ export default function MyAssetsPage() {
               value={transferTo}
               onChange={(e) => setTransferTo(e.target.value)}
               placeholder="0x..."
-              className="w-full px-6 py-4 rounded-2xl border border-black/10 focus:ring-4 focus:ring-accent-pink/20 outline-none transition-all font-mono text-sm"
+              className="w-full px-6 py-4 rounded-2xl border border-white/20 focus:ring-4 focus:ring-accent-pink/20 outline-none transition-all font-mono text-sm"
               autoFocus
             />
             <div className="flex gap-3">
               <button
                 onClick={() => setTransferModal(null)}
-                className="flex-1 py-4 border-2 border-black/10 rounded-full font-bold hover:border-black/30 transition-colors"
+                className="flex-1 py-4 border-2 border-white/20 rounded-full font-bold hover:border-black/30 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleTransfer}
                 disabled={transferring || !transferTo}
-                className="flex-1 py-4 bg-[#1A1A1A] text-white rounded-full font-bold hover:bg-black transition-colors disabled:opacity-50"
+                className="flex-1 py-4 bg-foreground text-background rounded-full font-bold hover:bg-black transition-colors disabled:opacity-50"
               >
                 {transferring ? 'Transferring…' : 'Confirm Transfer'}
               </button>

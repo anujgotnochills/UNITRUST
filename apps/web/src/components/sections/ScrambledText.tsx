@@ -56,7 +56,7 @@ export function ScrambledText() {
                 <span className="relative z-10">{char === ' ' ? '\u00A0' : char}</span>
                 {/* Ghost/duplicate layer */}
                 <span
-                  className="ghost-char absolute inset-0 text-[#1A1A1A]/[0.12] translate-y-1 z-0"
+                  className="ghost-char absolute inset-0 text-foreground/[0.12] translate-y-1 z-0"
                   aria-hidden="true"
                 >
                   {char === ' ' ? '\u00A0' : char}

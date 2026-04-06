@@ -60,11 +60,11 @@ export const DecentralisedTrust = () => {
       ScrollTrigger.create({
         trigger: sectionEl,
         start: 'top top',
-        end: () => `+=${getScrollAmount() * -1}`,
+        end: () => `+=${getScrollAmount() * -0.85}`,
         pin: true,
         animation: tween,
-        scrub: 1, // Smooth scrubbing
-        invalidateOnRefresh: true, // Recalculate on resize
+        scrub: 1.5,
+        invalidateOnRefresh: true,
       });
 
       const targets = [document.body, sectionEl];
@@ -113,11 +113,11 @@ export const DecentralisedTrust = () => {
       >
         <div 
           ref={horizontalRef} 
-          className="flex h-full items-center w-max will-change-transform pl-[5vw] pr-[20vw] md:pl-[10vw]"
+          className="flex h-full items-center w-max will-change-transform pl-[5vw] pr-[10vw] md:pl-[8vw] gap-6 md:gap-8"
         >
           {/* First element: The title block */}
           <div className="w-[90vw] md:w-[70vw] lg:w-[50vw] shrink-0 pr-8 md:pr-16 flex flex-col justify-center">
-            <h2 className="text-5xl md:text-7xl font-display mb-6 tracking-tight">
+            <h2 className="text-4xl md:text-6xl font-display mb-4 tracking-tight">
               Decentralised <br/>
               <span className="gradient-text">Trust</span>
             </h2>
@@ -133,7 +133,7 @@ export const DecentralisedTrust = () => {
               return (
                 <div 
                   key={idx}
-                  className="w-[85vw] max-w-[380px] shrink-0 border border-current opacity-90 rounded-3xl p-8 md:p-10 bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10 backdrop-blur-xl flex flex-col justify-between aspect-[4/5] sm:aspect-square transition-colors shadow-sm"
+              className="w-[80vw] max-w-[320px] shrink-0 border border-current opacity-90 rounded-3xl p-6 md:p-8 bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10 backdrop-blur-xl flex flex-col justify-between aspect-square transition-colors shadow-sm"
                   style={{ borderColor: 'rgba(150, 150, 150, 0.2)' }}
                 >
                   <div className="w-16 h-16 rounded-2xl bg-current opacity-80 flex items-center justify-center mb-8 text-black dark:text-white" style={{ background: 'rgba(150, 150, 150, 0.1)' }}>

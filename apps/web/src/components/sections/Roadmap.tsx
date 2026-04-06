@@ -45,7 +45,7 @@ const milestones = [
 ];
 
 const statusConfig = {
-  completed: { icon: CheckCircle2, badge: 'green' as const, label: 'Completed', color: 'text-[#1A1A1A]', bg: 'bg-[#1A1A1A]' },
+  completed: { icon: CheckCircle2, badge: 'green' as const, label: 'Completed', color: 'text-foreground', bg: 'bg-foreground' },
   'in-progress': { icon: Clock, badge: 'yellow' as const, label: 'In Progress', color: 'text-yellow-400', bg: 'bg-yellow-400' },
   planned: { icon: Circle, badge: 'muted' as const, label: 'Planned', color: 'text-muted', bg: 'bg-muted' },
 };
@@ -115,7 +115,7 @@ export function Roadmap() {
         {/* Header */}
         <div className="text-center mb-16 md:mb-20">
           <Badge variant="green" className="mb-4">Roadmap</Badge>
-          <h2 className="text-section font-display font-black text-[#1A1A1A] tracking-tight mb-4">
+          <h2 className="text-section font-display font-black text-foreground tracking-tight mb-4">
             The Path Forward
           </h2>
           <p className="text-lg text-muted max-w-xl mx-auto">
@@ -146,7 +146,7 @@ export function Roadmap() {
                       <span className={`font-mono text-sm font-semibold ${config.color}`}>
                         {milestone.quarter}
                       </span>
-                      <h3 className="text-xl font-display font-bold text-[#1A1A1A] mt-1 mb-2 tracking-tight">
+                      <h3 className="text-xl font-display font-bold text-foreground mt-1 mb-2 tracking-tight">
                         {milestone.title}
                       </h3>
                       <p className="text-sm text-muted leading-relaxed">
@@ -186,7 +186,7 @@ export function Roadmap() {
                       <span className={`font-mono text-xs font-semibold ${config.color}`}>
                         {milestone.quarter}
                       </span>
-                      <h3 className="text-lg font-display font-bold text-[#1A1A1A] mt-1 mb-1.5 tracking-tight">
+                      <h3 className="text-lg font-display font-bold text-foreground mt-1 mb-1.5 tracking-tight">
                         {milestone.title}
                       </h3>
                       <p className="text-sm text-muted leading-relaxed mb-2">

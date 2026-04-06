@@ -70,27 +70,23 @@ export default function RoleSelectPage() {
   if (!mounted || !isConnected) return null;
 
   return (
-    <div className="min-h-screen bg-[#FAF7F5] flex flex-col relative overflow-hidden">
-      {/* Background decorations */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-10 right-20 w-80 h-80 bg-accent-pink/8 rounded-full blur-[100px]" />
-        <div className="absolute bottom-10 left-20 w-96 h-96 bg-accent-green/8 rounded-full blur-[120px]" />
-      </div>
+    <div className="min-h-screen bg-background dot-grid-bg flex flex-col relative overflow-hidden">
+
 
       {/* Header */}
       <header className="relative z-10 p-6 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 rounded-lg bg-[#1A1A1A] flex items-center justify-center">
-            <span className="text-white font-bold text-sm font-display">U</span>
+          <div className="w-8 h-8 rounded-lg bg-foreground flex items-center justify-center">
+            <span className="text-background font-bold text-sm font-display">U</span>
           </div>
-          <span className="text-xl font-display font-black tracking-tight text-[#1A1A1A]">
-            Uni<span className="text-accent-pink">Trust</span>
+          <span className="text-xl font-display font-black tracking-tight text-foreground">
+            UniTrust
           </span>
         </Link>
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-black/10 shadow-sm">
-            <Wallet className="w-4 h-4 text-[#1A1A1A]" />
-            <span className="text-sm font-mono font-medium text-[#1A1A1A]">
+          <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-surface border border-white/20 shadow-sm">
+            <Wallet className="w-4 h-4 text-foreground" />
+            <span className="text-sm font-mono font-medium text-foreground">
               {address?.slice(0, 6)}...{address?.slice(-4)}
             </span>
           </div>
@@ -102,7 +98,7 @@ export default function RoleSelectPage() {
         <div className="max-w-3xl w-full text-center space-y-12">
           {/* Title */}
           <div className="space-y-3">
-            <h1 className="text-5xl font-display font-black text-[#1A1A1A] tracking-tight leading-[1.1]">
+            <h1 className="text-5xl font-display font-black text-foreground tracking-tight leading-[1.1]">
               Choose Your Role
             </h1>
             <p className="text-lg text-muted font-medium max-w-md mx-auto">
@@ -119,20 +115,20 @@ export default function RoleSelectPage() {
               onMouseLeave={() => setHoveredRole(null)}
               className={`group relative bg-white rounded-[32px] border-2 p-8 text-left transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 ${
                 hoveredRole === 'user'
-                  ? 'border-accent-green shadow-accent-green/10'
-                  : 'border-black/[0.06] shadow-sm'
+                  ? 'border-black shadow-black/5'
+                  : 'border-black/5 shadow-sm'
               }`}
             >
               <div className="space-y-5">
                 <div className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-colors duration-300 ${
-                  hoveredRole === 'user' ? 'bg-accent-green/20' : 'bg-[#1A1A1A]/5'
+                  hoveredRole === 'user' ? 'bg-black/5' : 'bg-foreground/5'
                 }`}>
                   <GraduationCap className={`w-8 h-8 transition-colors duration-300 ${
-                    hoveredRole === 'user' ? 'text-accent-green' : 'text-[#1A1A1A]/50'
+                    hoveredRole === 'user' ? 'text-black' : 'text-foreground/50'
                   }`} />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-display font-black text-[#1A1A1A] tracking-tight">
+                  <h3 className="text-2xl font-display font-black text-foreground tracking-tight">
                     I'm a User
                   </h3>
                   <p className="text-muted text-sm mt-2 leading-relaxed">
@@ -140,7 +136,7 @@ export default function RoleSelectPage() {
                   </p>
                 </div>
                 <div className={`flex items-center gap-2 text-sm font-bold transition-colors duration-300 ${
-                  hoveredRole === 'user' ? 'text-accent-green' : 'text-muted'
+                  hoveredRole === 'user' ? 'text-black' : 'text-muted'
                 }`}>
                   Enter Dashboard
                   <ArrowRight className={`w-4 h-4 transition-transform duration-300 ${
@@ -157,20 +153,20 @@ export default function RoleSelectPage() {
               onMouseLeave={() => setHoveredRole(null)}
               className={`group relative bg-white rounded-[32px] border-2 p-8 text-left transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 ${
                 hoveredRole === 'institute'
-                  ? 'border-accent-pink shadow-accent-pink/10'
-                  : 'border-black/[0.06] shadow-sm'
+                  ? 'border-black shadow-black/5'
+                  : 'border-black/5 shadow-sm'
               }`}
             >
               <div className="space-y-5">
                 <div className={`w-16 h-16 rounded-2xl flex items-center justify-center transition-colors duration-300 ${
-                  hoveredRole === 'institute' ? 'bg-accent-pink/20' : 'bg-[#1A1A1A]/5'
+                  hoveredRole === 'institute' ? 'bg-black/5' : 'bg-foreground/5'
                 }`}>
                   <Building2 className={`w-8 h-8 transition-colors duration-300 ${
-                    hoveredRole === 'institute' ? 'text-accent-pink' : 'text-[#1A1A1A]/50'
+                    hoveredRole === 'institute' ? 'text-black' : 'text-foreground/50'
                   }`} />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-display font-black text-[#1A1A1A] tracking-tight">
+                  <h3 className="text-2xl font-display font-black text-foreground tracking-tight">
                     I'm an Institute
                   </h3>
                   <p className="text-muted text-sm mt-2 leading-relaxed">
@@ -178,7 +174,7 @@ export default function RoleSelectPage() {
                   </p>
                 </div>
                 <div className={`flex items-center gap-2 text-sm font-bold transition-colors duration-300 ${
-                  hoveredRole === 'institute' ? 'text-accent-pink' : 'text-muted'
+                  hoveredRole === 'institute' ? 'text-black' : 'text-muted'
                 }`}>
                   {isLoadingProfile ? (
                     <Loader2 className="w-4 h-4 animate-spin" />

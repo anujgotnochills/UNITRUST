@@ -42,15 +42,15 @@ export function Navbar() {
 
   return (
     <>
-      <div className="fixed top-16 left-1/2 -translate-x-1/2 w-[95%] max-w-5xl z-40 transition-all duration-300">
+      <div className="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-5xl z-40 transition-all duration-300">
         <nav
           className={cn(
             'w-full rounded-full flex items-center justify-between px-6 py-3 transition-colors duration-300',
-            scrolled ? 'bg-[#1A1A1A]/95 backdrop-blur-md shadow-lg' : 'bg-[#1A1A1A]'
+            scrolled ? 'bg-foreground/95 backdrop-blur-md shadow-lg' : 'bg-foreground'
           )}
         >
           {/* Logo */}
-          <a href="/" className="flex items-center gap-2 group text-white">
+          <a href="/" className="flex items-center gap-2 group text-background">
             <span className="text-xl font-display font-bold tracking-tight">
               UniTrust
             </span>
@@ -69,7 +69,7 @@ export function Navbar() {
                   href={link.href || '#'}
                   className={cn(
                     'flex items-center gap-1 px-4 py-2 text-sm font-medium tracking-tight rounded-full transition-colors duration-200',
-                    'text-gray-300 hover:text-white',
+                    'text-gray-300 hover:text-background',
                   )}
                 >
                   {link.label}
@@ -86,12 +86,12 @@ export function Navbar() {
                 {/* Dropdown */}
                 {link.children && activeDropdown === link.label && (
                   <div className="absolute top-full left-0 pt-4 w-64">
-                    <div className="bg-[#1A1A1A] rounded-2xl p-2 shadow-2xl border border-white/10">
+                    <div className="bg-foreground rounded-2xl p-2 shadow-2xl border border-white/10">
                       {link.children.map((child) => (
                         <a
                           key={child.label}
                           href={child.href}
-                          className="flex flex-col gap-0.5 p-3 rounded-xl hover:bg-white/10 transition-colors duration-200 group text-white"
+                          className="flex flex-col gap-0.5 p-3 rounded-xl hover:bg-surface/10 transition-colors duration-200 group text-background"
                         >
                           <span className="text-sm font-medium transition-colors duration-200">
                             {child.label}
@@ -108,7 +108,7 @@ export function Navbar() {
 
           {/* Right */}
           <div className="hidden lg:flex items-center gap-3">
-            <Link href="/connect" className="bg-white text-black px-6 py-2 rounded-full text-sm font-bold hover:bg-gray-100 transition-colors flex items-center gap-2">
+            <Link href="/connect" className="bg-surface text-black px-6 py-2 rounded-full text-sm font-bold hover:bg-gray-100 transition-colors flex items-center gap-2">
               Launch App
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
@@ -117,7 +117,7 @@ export function Navbar() {
           {/* Mobile hamburger */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="lg:hidden p-2 rounded-full text-white hover:bg-white/10 transition-colors"
+            className="lg:hidden p-2 rounded-full text-background hover:bg-surface/10 transition-colors"
             aria-label="Toggle menu"
           >
             {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -141,7 +141,7 @@ export function Navbar() {
                 <a
                   href={link.href || '#'}
                   onClick={() => setMobileOpen(false)}
-                  className="block py-4 text-2xl font-display font-bold text-white/80 hover:text-accent-green transition-colors duration-200 border-b border-white/5"
+                  className="block py-4 text-2xl font-display font-bold text-background/80 hover:text-accent-green transition-colors duration-200 border-b border-white/5"
                 >
                   {link.label}
                 </a>

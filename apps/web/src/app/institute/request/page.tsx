@@ -138,30 +138,30 @@ export default function InstituteRequestPage() {
   if (!mounted || !isConnected) return null;
 
   return (
-    <div className="min-h-screen bg-[#FAF7F5] flex flex-col">
+    <div className="min-h-screen bg-background dot-grid-bg flex flex-col">
       {/* Header */}
-      <header className="border-b border-[#1A1A1A]/10 bg-white/80 backdrop-blur-md sticky top-0 z-50">
+      <header className="border-b border-border/10 bg-surface/80 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-[#1A1A1A] flex items-center justify-center">
-              <span className="text-white font-bold text-sm font-display">U</span>
+            <div className="w-8 h-8 rounded-lg bg-foreground flex items-center justify-center">
+              <span className="text-background font-bold text-sm font-display">U</span>
             </div>
-            <span className="text-xl font-display font-black tracking-tight text-[#1A1A1A]">
-              Uni<span className="text-accent-pink">Trust</span>
+            <span className="text-xl font-display font-black tracking-tight text-foreground">
+              UniTrust
             </span>
           </Link>
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent-pink/10 border border-accent-pink/20">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/5 border border-black/10">
               {instituteProfile?.logo ? (
                 <img src={instituteProfile.logo} alt="Logo" className="w-5 h-5 rounded-full object-cover" />
               ) : (
-                <Building2 className="w-3.5 h-3.5 text-accent-pink" />
+                <Building2 className="w-3.5 h-3.5 text-black" />
               )}
-              <span className="text-xs font-bold text-accent-pink uppercase tracking-wide">
+              <span className="text-xs font-bold text-black uppercase tracking-wide">
                 {instituteProfile?.instituteName || 'Institute'}
               </span>
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-[#1A1A1A]/10 shadow-sm text-[#1A1A1A]">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-surface border border-border/10 shadow-sm text-foreground">
               <Wallet className="w-4 h-4" />
               <span className="text-sm font-mono font-medium">
                 {address?.slice(0, 6)}...{address?.slice(-4)}
@@ -183,7 +183,7 @@ export default function InstituteRequestPage() {
         <div className="space-y-8">
           {/* Title */}
           <div>
-            <h1 className="text-4xl font-display font-black text-[#1A1A1A] tracking-tight">
+            <h1 className="text-4xl font-display font-black text-foreground tracking-tight">
               Institute Portal
             </h1>
             <p className="text-muted mt-2 text-lg">
@@ -192,13 +192,13 @@ export default function InstituteRequestPage() {
           </div>
 
           {/* Tab switcher */}
-          <div className="flex gap-2 bg-white rounded-xl p-1 border border-black/[0.06] w-fit">
+          <div className="flex gap-2 bg-surface rounded-xl p-1 border border-black/[0.06] w-fit">
             <button
               onClick={() => setActiveTab('new')}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold transition-all ${
                 activeTab === 'new'
-                  ? 'bg-[#1A1A1A] text-white shadow-sm'
-                  : 'text-muted hover:text-[#1A1A1A]'
+                  ? 'bg-foreground text-background shadow-sm'
+                  : 'text-muted hover:text-foreground'
               }`}
             >
               <FilePlus className="w-4 h-4" />
@@ -208,8 +208,8 @@ export default function InstituteRequestPage() {
               onClick={() => setActiveTab('history')}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold transition-all ${
                 activeTab === 'history'
-                  ? 'bg-[#1A1A1A] text-white shadow-sm'
-                  : 'text-muted hover:text-[#1A1A1A]'
+                  ? 'bg-foreground text-background shadow-sm'
+                  : 'text-muted hover:text-foreground'
               }`}
             >
               <Files className="w-4 h-4" />
@@ -224,52 +224,52 @@ export default function InstituteRequestPage() {
 
           {/* New Request Form */}
           {activeTab === 'new' && (
-            <div className="bg-white rounded-[32px] border border-black/[0.1] shadow-xl p-10 max-w-2xl">
+            <div className="bg-surface rounded-[32px] border border-black/[0.1] shadow-xl p-10 max-w-2xl">
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
-                  <label className="block text-sm font-bold text-[#1A1A1A] uppercase tracking-widest px-1">Student Wallet Address</label>
+                  <label className="block text-sm font-bold text-foreground uppercase tracking-widest px-1">Student Wallet Address</label>
                   <input
                     required
                     value={formData.userWallet}
                     onChange={(e) => setFormData({ ...formData, userWallet: e.target.value })}
                     type="text"
-                    className="w-full px-6 py-4 rounded-2xl border border-black/10 focus:ring-4 focus:ring-accent-pink/20 outline-none transition-all font-mono"
+                    className="w-full px-6 py-4 rounded-2xl border border-white/20 focus:ring-4 focus:ring-accent-pink/20 outline-none transition-all font-mono"
                     placeholder="0x..."
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label className="block text-sm font-bold text-[#1A1A1A] uppercase tracking-widest px-1">Student / Recipient Name</label>
+                  <label className="block text-sm font-bold text-foreground uppercase tracking-widest px-1">Student / Recipient Name</label>
                   <input
                     required
                     value={formData.studentName}
                     onChange={(e) => setFormData({ ...formData, studentName: e.target.value })}
                     type="text"
-                    className="w-full px-6 py-4 rounded-2xl border border-black/10 focus:ring-4 focus:ring-accent-pink/20 outline-none transition-all font-medium"
+                    className="w-full px-6 py-4 rounded-2xl border border-white/20 focus:ring-4 focus:ring-accent-pink/20 outline-none transition-all font-medium"
                     placeholder="John Doe"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="block text-sm font-bold text-[#1A1A1A] uppercase tracking-widest px-1">Certificate Title</label>
+                    <label className="block text-sm font-bold text-foreground uppercase tracking-widest px-1">Certificate Title</label>
                     <input
                       required
                       value={formData.title}
                       onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                       type="text"
-                      className="w-full px-6 py-4 rounded-2xl border border-black/10 focus:ring-4 focus:ring-accent-pink/20 outline-none transition-all font-medium"
+                      className="w-full px-6 py-4 rounded-2xl border border-white/20 focus:ring-4 focus:ring-accent-pink/20 outline-none transition-all font-medium"
                       placeholder="e.g. B.S. Computer Science"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="block text-sm font-bold text-[#1A1A1A] uppercase tracking-widest px-1">Course / Major</label>
+                    <label className="block text-sm font-bold text-foreground uppercase tracking-widest px-1">Course / Major</label>
                     <input
                       required
                       value={formData.course}
                       onChange={(e) => setFormData({ ...formData, course: e.target.value })}
                       type="text"
-                      className="w-full px-6 py-4 rounded-2xl border border-black/10 focus:ring-4 focus:ring-accent-pink/20 outline-none transition-all font-medium"
+                      className="w-full px-6 py-4 rounded-2xl border border-white/20 focus:ring-4 focus:ring-accent-pink/20 outline-none transition-all font-medium"
                       placeholder="Computer Science"
                     />
                   </div>
@@ -277,21 +277,21 @@ export default function InstituteRequestPage() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="block text-sm font-bold text-[#1A1A1A] uppercase tracking-widest px-1">Issue Date</label>
+                    <label className="block text-sm font-bold text-foreground uppercase tracking-widest px-1">Issue Date</label>
                     <input
                       required
                       value={formData.issueDate}
                       onChange={(e) => setFormData({ ...formData, issueDate: e.target.value })}
                       type="date"
-                      className="w-full px-6 py-4 rounded-2xl border border-black/10 focus:ring-4 focus:ring-accent-pink/20 outline-none transition-all font-medium"
+                      className="w-full px-6 py-4 rounded-2xl border border-white/20 focus:ring-4 focus:ring-accent-pink/20 outline-none transition-all font-medium"
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="block text-sm font-bold text-[#1A1A1A] uppercase tracking-widest px-1">Certificate Type</label>
+                    <label className="block text-sm font-bold text-foreground uppercase tracking-widest px-1">Certificate Type</label>
                     <select
                       value={formData.certificateType}
                       onChange={(e) => setFormData({ ...formData, certificateType: e.target.value as any })}
-                      className="w-full px-6 py-4 rounded-2xl border border-black/10 focus:ring-4 focus:ring-accent-pink/20 outline-none transition-all font-medium"
+                      className="w-full px-6 py-4 rounded-2xl border border-white/20 focus:ring-4 focus:ring-accent-pink/20 outline-none transition-all font-medium"
                     >
                       {CERTIFICATE_TYPES.map((type) => (
                         <option key={type} value={type}>{type}</option>
@@ -303,7 +303,7 @@ export default function InstituteRequestPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting || !address}
-                  className="w-full py-5 bg-[#1A1A1A] text-white rounded-full font-black text-lg hover:bg-black transition-transform active:scale-[0.98] shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+                  className="w-full py-5 bg-foreground text-background rounded-full font-black text-lg hover:bg-black transition-transform active:scale-[0.98] shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
                 >
                   {isSubmitting ? (
                     <>
@@ -325,11 +325,11 @@ export default function InstituteRequestPage() {
           {activeTab === 'history' && (
             <div>
               {reqsLoading ? (
-                <div className="bg-white rounded-[32px] border border-black/[0.05] shadow-sm p-24 flex items-center justify-center">
-                  <div className="w-8 h-8 rounded-full border-4 border-black/10 border-t-accent-pink animate-spin" />
+                <div className="bg-surface rounded-[32px] border border-black/[0.05] shadow-sm p-24 flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-full border-4 border-white/20 border-t-accent-pink animate-spin" />
                 </div>
               ) : requests.length === 0 ? (
-                <div className="bg-white rounded-[32px] border border-black/[0.05] shadow-sm p-32 text-center">
+                <div className="bg-surface rounded-[32px] border border-black/[0.05] shadow-sm p-32 text-center">
                   <div className="max-w-xs mx-auto space-y-4">
                     <p className="text-5xl">📭</p>
                     <p className="text-muted text-lg font-medium">No requests submitted yet.</p>
@@ -344,7 +344,7 @@ export default function InstituteRequestPage() {
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {requests.map((req: any) => (
-                    <div key={req._id} className="bg-white rounded-[24px] border border-black/[0.05] shadow-sm p-6 flex flex-col gap-4">
+                    <div key={req._id} className="bg-surface rounded-[24px] border border-black/[0.05] shadow-sm p-6 flex flex-col gap-4">
                       <div className="flex justify-between items-start">
                         <div>
                           <h3 className="text-lg font-black font-display tracking-tight">{req.certificateDetails?.title || 'Certificate'}</h3>

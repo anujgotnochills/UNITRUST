@@ -34,7 +34,7 @@ export default function DashboardPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-end">
         <div>
-          <h2 className="text-3xl font-display font-black text-[#1A1A1A] tracking-tight text-gradient-off">Overview</h2>
+          <h2 className="text-3xl font-display font-black text-foreground tracking-tight text-gradient-off">Overview</h2>
           <p className="text-muted mt-2 font-medium">Welcome to your UniTrust portal.</p>
         </div>
       </div>
@@ -45,9 +45,9 @@ export default function DashboardPage() {
           { label: 'Active Certificates', value: activeCerts },
           { label: 'Pending Requests', value: pendingRequests },
         ].map((stat, i) => (
-          <div key={i} className="bg-white p-8 rounded-3xl border border-black/[0.05] shadow-sm hover:shadow-md transition-shadow">
+          <div key={i} className="bg-surface p-8 rounded-3xl border border-black/[0.05] shadow-sm hover:shadow-md transition-shadow">
             <h3 className="text-xs font-bold text-muted uppercase tracking-widest">{stat.label}</h3>
-            <p className="text-5xl font-display font-black text-[#1A1A1A] mt-3 tracking-tighter">{stat.value}</p>
+            <p className="text-5xl font-display font-black text-foreground mt-3 tracking-tighter">{stat.value}</p>
           </div>
         ))}
       </div>

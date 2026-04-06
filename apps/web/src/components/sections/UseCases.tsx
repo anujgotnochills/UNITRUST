@@ -91,14 +91,14 @@ export function UseCases() {
       <div className="content-width">
         <div className="text-center mb-12">
           <Badge variant="purple" className="mb-4">Use Cases</Badge>
-          <h2 className="text-section font-display font-black text-[#1A1A1A] tracking-tight">
+          <h2 className="text-section font-display font-black text-foreground tracking-tight">
             Real World Impact
           </h2>
         </div>
 
         {/* Tabs */}
         <div className="flex justify-center mb-12">
-          <div ref={tabsRef} className="relative inline-flex items-center gap-1 p-1 rounded-full bg-white border border-black/5 shadow-sm">
+          <div ref={tabsRef} className="relative inline-flex items-center gap-1 p-1 rounded-full bg-surface border border-white/10 shadow-sm">
             <div
               ref={indicatorRef}
               className="absolute top-1 left-0 h-[calc(100%-8px)] rounded-full bg-gray-100 transition-none"
@@ -108,7 +108,7 @@ export function UseCases() {
                 key={uc.id}
                 onClick={() => setActive(i)}
                 className={`uc-tab relative z-10 flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium transition-colors duration-200 ${
-                  active === i ? 'text-[#1A1A1A] font-medium' : 'text-muted hover:text-[#1A1A1A]/70'
+                  active === i ? 'text-foreground font-medium' : 'text-muted hover:text-foreground/70'
                 }`}
               >
                 <uc.icon className="w-4 h-4" />
@@ -119,13 +119,13 @@ export function UseCases() {
         </div>
 
         {/* Content */}
-        <div className="uc-content relative rounded-3xl overflow-hidden border border-black/5 bg-white shadow-sm min-h-[400px]">
+        <div className="uc-content relative rounded-3xl overflow-hidden border border-white/10 bg-surface shadow-sm min-h-[400px]">
           {/* Background gradient */}
           <div className={`absolute inset-0 bg-gradient-to-br ${current.gradient} opacity-10`} />
 
           <div className="relative z-10 p-8 md:p-12 lg:p-16 flex flex-col justify-center min-h-[400px]">
             <div className="max-w-2xl">
-              <h3 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-[#1A1A1A] mb-4 tracking-tight">
+              <h3 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-foreground mb-4 tracking-tight">
                 {current.title}
               </h3>
               <p className="text-lg text-muted leading-relaxed mb-8 max-w-lg">
@@ -135,7 +135,7 @@ export function UseCases() {
               <div className="grid grid-cols-3 gap-6 mb-8">
                 {current.stats.map((stat) => (
                   <div key={stat.label}>
-                    <div className="text-2xl md:text-3xl font-display font-bold text-[#1A1A1A]">
+                    <div className="text-2xl md:text-3xl font-display font-bold text-foreground">
                       {stat.value}
                     </div>
                     <div className="text-xs text-muted mt-1">{stat.label}</div>
@@ -145,7 +145,7 @@ export function UseCases() {
 
               <a
                 href="#"
-                className="inline-flex items-center gap-2 text-[#1A1A1A] text-sm font-medium group animated-underline"
+                className="inline-flex items-center gap-2 text-foreground text-sm font-medium group animated-underline"
               >
                 Explore {current.tab}
                 <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-1" />

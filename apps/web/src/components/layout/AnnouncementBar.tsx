@@ -20,7 +20,7 @@ export function AnnouncementBar() {
 
   return (
     <div className="fixed top-2 left-1/2 -translate-x-1/2 w-[95%] max-w-4xl z-50">
-      <div className="bg-accent-pink text-[#1A1A1A] rounded-full py-2.5 px-6 flex items-center justify-center relative shadow-sm border border-black/5">
+      <div className="bg-accent-pink text-foreground rounded-full py-2.5 px-6 flex items-center justify-center relative shadow-sm border border-white/10">
         <a
           href="#"
           className="text-sm font-medium hover:opacity-80 transition-opacity"
@@ -29,7 +29,7 @@ export function AnnouncementBar() {
         </a>
         <button
           onClick={handleDismiss}
-          className="absolute right-2 p-1.5 rounded-full bg-[#1A1A1A] text-white hover:bg-black transition-colors"
+          className="absolute right-2 p-1.5 rounded-full bg-foreground text-background hover:bg-black transition-colors"
           aria-label="Dismiss announcement"
         >
           <X className="w-3.5 h-3.5" />

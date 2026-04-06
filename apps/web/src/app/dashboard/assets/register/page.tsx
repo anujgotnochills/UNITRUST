@@ -121,18 +121,18 @@ export default function RegisterAssetPage() {
         <div className="w-20 h-20 rounded-full bg-accent-green/20 flex items-center justify-center">
           <CheckCircle2 className="w-10 h-10 text-accent-green" />
         </div>
-        <h2 className="text-4xl font-display font-black text-[#1A1A1A] tracking-tight">Asset Registered!</h2>
+        <h2 className="text-4xl font-display font-black text-foreground tracking-tight">Asset Registered!</h2>
         <p className="text-muted text-lg">Your asset metadata is on IPFS and recorded in UniTrust.</p>
         <div className="flex gap-4">
           <button
             onClick={() => { setIsDone(false); setStep(-1); setFormData({ name: '', description: '', category: ASSET_CATEGORIES[0], ecoNotes: '' }); setImage(null); setImagePreview(''); }}
-            className="px-8 py-3 border-2 border-[#1A1A1A] rounded-full font-bold hover:bg-[#1A1A1A] hover:text-white transition-colors"
+            className="px-8 py-3 border-2 border-border rounded-full font-bold hover:bg-foreground hover:text-background transition-colors"
           >
             Register Another
           </button>
           <button
             onClick={() => router.push('/dashboard/assets')}
-            className="px-8 py-3 bg-[#1A1A1A] text-white rounded-full font-bold hover:bg-black transition-colors"
+            className="px-8 py-3 bg-foreground text-background rounded-full font-bold hover:bg-black transition-colors"
           >
             View My Assets →
           </button>
@@ -144,19 +144,19 @@ export default function RegisterAssetPage() {
   return (
     <div className="space-y-8 max-w-2xl mx-auto">
       <div className="text-center">
-        <h2 className="text-4xl font-display font-black text-[#1A1A1A] tracking-tight">Register Asset</h2>
+        <h2 className="text-4xl font-display font-black text-foreground tracking-tight">Register Asset</h2>
         <p className="text-muted mt-2 text-lg">Tokenize a physical or digital asset with IPFS metadata.</p>
       </div>
 
       {/* Progress Steps */}
       {isMinting && (
-        <div className="bg-white rounded-[24px] border border-black/[0.05] p-6">
+        <div className="bg-surface rounded-[24px] border border-black/[0.05] p-6">
           <div className="flex items-center justify-between relative">
             <div className="absolute top-4 left-0 right-0 h-0.5 bg-black/5 z-0" />
             {STEPS.map((s, i) => (
               <div key={s} className="flex flex-col items-center gap-2 z-10">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
-                  i < step ? 'bg-accent-green text-white' : i === step ? 'bg-[#1A1A1A] text-white' : 'bg-white border-2 border-black/10 text-muted'
+                  i < step ? 'bg-accent-green text-background' : i === step ? 'bg-foreground text-background' : 'bg-surface border-2 border-white/20 text-muted'
                 }`}>
                   {i < step ? '✓' : i === step ? <Loader2 className="w-4 h-4 animate-spin" /> : i + 1}
                 </div>
@@ -167,12 +167,12 @@ export default function RegisterAssetPage() {
         </div>
       )}
 
-      <div className="bg-white rounded-[32px] border border-black/[0.1] shadow-xl p-10">
+      <div className="bg-surface rounded-[32px] border border-black/[0.1] shadow-xl p-10">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Image Upload */}
           <div className="space-y-2">
-            <label className="block text-sm font-bold text-[#1A1A1A] uppercase tracking-widest px-1">Asset Image</label>
-            <label className={`flex flex-col items-center justify-center border-2 border-dashed rounded-2xl cursor-pointer transition-all h-48 overflow-hidden relative ${imagePreview ? 'border-transparent' : 'border-black/10 hover:border-accent-pink/40 bg-black/[0.02] hover:bg-accent-pink/5'}`}>
+            <label className="block text-sm font-bold text-foreground uppercase tracking-widest px-1">Asset Image</label>
+            <label className={`flex flex-col items-center justify-center border-2 border-dashed rounded-2xl cursor-pointer transition-all h-48 overflow-hidden relative ${imagePreview ? 'border-transparent' : 'border-white/20 hover:border-accent-pink/40 bg-black/[0.02] hover:bg-accent-pink/5'}`}>
               {imagePreview ? (
                 <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
               ) : (
@@ -188,34 +188,34 @@ export default function RegisterAssetPage() {
 
           {/* Name */}
           <div className="space-y-2">
-            <label className="block text-sm font-bold text-[#1A1A1A] uppercase tracking-widest px-1">Asset Name</label>
+            <label className="block text-sm font-bold text-foreground uppercase tracking-widest px-1">Asset Name</label>
             <input
               required value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               type="text" placeholder="e.g. MacBook Pro 2023"
-              className="w-full px-6 py-4 rounded-2xl border border-black/10 focus:ring-4 focus:ring-accent-pink/20 outline-none transition-all font-medium"
+              className="w-full px-6 py-4 rounded-2xl border border-white/20 focus:ring-4 focus:ring-accent-pink/20 outline-none transition-all font-medium"
             />
           </div>
 
           {/* Description */}
           <div className="space-y-2">
-            <label className="block text-sm font-bold text-[#1A1A1A] uppercase tracking-widest px-1">Description</label>
+            <label className="block text-sm font-bold text-foreground uppercase tracking-widest px-1">Description</label>
             <textarea
               required value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder="Describe the asset — condition, serial number, etc."
               rows={3}
-              className="w-full px-6 py-4 rounded-2xl border border-black/10 focus:ring-4 focus:ring-accent-pink/20 outline-none transition-all font-medium resize-none"
+              className="w-full px-6 py-4 rounded-2xl border border-white/20 focus:ring-4 focus:ring-accent-pink/20 outline-none transition-all font-medium resize-none"
             />
           </div>
 
           {/* Category */}
           <div className="space-y-2">
-            <label className="block text-sm font-bold text-[#1A1A1A] uppercase tracking-widest px-1">Category</label>
+            <label className="block text-sm font-bold text-foreground uppercase tracking-widest px-1">Category</label>
             <select
               value={formData.category}
               onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-              className="w-full px-6 py-4 rounded-2xl border border-black/10 focus:ring-4 focus:ring-accent-pink/20 outline-none transition-all font-medium"
+              className="w-full px-6 py-4 rounded-2xl border border-white/20 focus:ring-4 focus:ring-accent-pink/20 outline-none transition-all font-medium"
             >
               {ASSET_CATEGORIES.map((cat) => <option key={cat} value={cat}>{cat}</option>)}
             </select>
@@ -226,7 +226,7 @@ export default function RegisterAssetPage() {
             <div className={`p-5 rounded-2xl border-2 ${carbon.tag === 'Green' ? 'border-green-200 bg-green-50' : carbon.tag === 'Neutral' ? 'border-amber-200 bg-amber-50' : 'border-red-200 bg-red-50'}`}>
               <div className="flex items-center gap-2 mb-2">
                 <Leaf className={`w-4 h-4 ${carbon.tag === 'Green' ? 'text-green-600' : carbon.tag === 'Neutral' ? 'text-amber-600' : 'text-red-600'}`} />
-                <span className="text-sm font-bold text-[#1A1A1A]">Auto-Estimated Carbon Footprint</span>
+                <span className="text-sm font-bold text-foreground">Auto-Estimated Carbon Footprint</span>
               </div>
               <div className="flex items-baseline gap-2">
                 <span className="text-3xl font-black font-display">{carbon.score}</span>
@@ -240,19 +240,19 @@ export default function RegisterAssetPage() {
 
           {/* Eco Notes */}
           <div className="space-y-2">
-            <label className="block text-sm font-bold text-[#1A1A1A] uppercase tracking-widest px-1">Eco Notes <span className="text-muted font-normal normal-case">(optional)</span></label>
+            <label className="block text-sm font-bold text-foreground uppercase tracking-widest px-1">Eco Notes <span className="text-muted font-normal normal-case">(optional)</span></label>
             <input
               value={formData.ecoNotes}
               onChange={(e) => setFormData({ ...formData, ecoNotes: e.target.value })}
               type="text" placeholder="e.g. Recycled packaging, energy efficient use"
-              className="w-full px-6 py-4 rounded-2xl border border-black/10 focus:ring-4 focus:ring-accent-pink/20 outline-none transition-all font-medium"
+              className="w-full px-6 py-4 rounded-2xl border border-white/20 focus:ring-4 focus:ring-accent-pink/20 outline-none transition-all font-medium"
             />
           </div>
 
           <button
             type="submit"
             disabled={isMinting || !address}
-            className="w-full py-5 bg-[#1A1A1A] text-white rounded-full font-black text-lg hover:bg-black transition-transform active:scale-[0.98] shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full py-5 bg-foreground text-background rounded-full font-black text-lg hover:bg-black transition-transform active:scale-[0.98] shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {isMinting ? (
               <><Loader2 className="w-5 h-5 animate-spin" /> Processing…</>

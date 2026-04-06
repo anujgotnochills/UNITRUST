@@ -104,20 +104,20 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0A0A0A] text-white">
+    <div className="min-h-screen bg-[#0A0A0A] text-background">
       {/* Header */}
       <header className="border-b border-white/10 sticky top-0 z-50 bg-[#0A0A0A]/90 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Link href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-white flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-surface flex items-center justify-center">
                 <span className="text-[#0A0A0A] font-bold text-sm font-display">U</span>
               </div>
-              <span className="text-xl font-display font-black tracking-tight">
-                Uni<span className="text-accent-pink">Trust</span>
+              <span className="text-xl font-display font-black tracking-tight text-white border-r border-white/20 pr-4">
+                UniTrust
               </span>
             </Link>
-            <div className="h-6 w-px bg-white/10" />
+            <div className="h-6 w-px bg-surface/10" />
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-red-500/10 border border-red-500/20">
               <ShieldCheck className="w-3.5 h-3.5 text-red-400" />
               <span className="text-xs font-bold text-red-400 uppercase tracking-wide">Admin Panel</span>
@@ -126,14 +126,14 @@ export default function AdminPage() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => refetch()}
-              className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-sm font-medium hover:bg-white/10 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 rounded-full bg-surface/5 border border-white/10 text-sm font-medium hover:bg-surface/10 transition-colors"
             >
               <RefreshCw className="w-3.5 h-3.5" />
               Refresh
             </button>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10">
-              <Wallet className="w-4 h-4 text-white/50" />
-              <span className="text-sm font-mono text-white/70">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-surface/5 border border-white/10">
+              <Wallet className="w-4 h-4 text-background/50" />
+              <span className="text-sm font-mono text-background/70">
                 {address?.slice(0, 6)}...{address?.slice(-4)}
               </span>
             </div>
@@ -145,14 +145,14 @@ export default function AdminPage() {
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {[
-            { label: 'Total', value: stats.total, color: 'text-white' },
+            { label: 'Total', value: stats.total, color: 'text-background' },
             { label: 'Pending', value: stats.pending, color: 'text-yellow-400' },
             { label: 'Accepted', value: stats.accepted, color: 'text-blue-400' },
             { label: 'Minted', value: stats.minted, color: 'text-green-400' },
             { label: 'Rejected', value: stats.rejected, color: 'text-red-400' },
           ].map((stat) => (
-            <div key={stat.label} className="bg-white/5 border border-white/10 rounded-2xl p-5">
-              <p className="text-xs font-bold text-white/40 uppercase tracking-widest">{stat.label}</p>
+            <div key={stat.label} className="bg-surface/5 border border-white/10 rounded-2xl p-5">
+              <p className="text-xs font-bold text-background/40 uppercase tracking-widest">{stat.label}</p>
               <p className={`text-3xl font-display font-black mt-2 ${stat.color}`}>{stat.value}</p>
             </div>
           ))}
@@ -162,29 +162,29 @@ export default function AdminPage() {
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-display font-black tracking-tight">Certificate Requests</h2>
           <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4 text-white/40" />
+            <Filter className="w-4 h-4 text-background/40" />
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="bg-white/5 border border-white/10 text-white text-sm rounded-xl px-4 py-2 outline-none focus:border-accent-pink/40"
+              className="bg-surface/5 border border-white/10 text-background text-sm rounded-xl px-4 py-2 outline-none focus:border-accent-pink/40"
             >
-              <option value="all" className="bg-[#1A1A1A]">All Statuses</option>
-              <option value="pending" className="bg-[#1A1A1A]">Pending</option>
-              <option value="accepted" className="bg-[#1A1A1A]">Accepted</option>
-              <option value="minted" className="bg-[#1A1A1A]">Minted</option>
-              <option value="rejected" className="bg-[#1A1A1A]">Rejected</option>
+              <option value="all" className="bg-foreground">All Statuses</option>
+              <option value="pending" className="bg-foreground">Pending</option>
+              <option value="accepted" className="bg-foreground">Accepted</option>
+              <option value="minted" className="bg-foreground">Minted</option>
+              <option value="rejected" className="bg-foreground">Rejected</option>
             </select>
           </div>
         </div>
 
         {/* Requests List */}
         {isLoading ? (
-          <div className="bg-white/5 border border-white/10 rounded-[32px] p-24 flex items-center justify-center">
+          <div className="bg-surface/5 border border-white/10 rounded-[32px] p-24 flex items-center justify-center">
             <div className="w-8 h-8 rounded-full border-4 border-white/10 border-t-accent-pink animate-spin" />
           </div>
         ) : filteredRequests.length === 0 ? (
-          <div className="bg-white/5 border border-white/10 rounded-[32px] p-24 text-center">
-            <p className="text-white/40 text-lg font-medium">No requests found.</p>
+          <div className="bg-surface/5 border border-white/10 rounded-[32px] p-24 text-center">
+            <p className="text-background/40 text-lg font-medium">No requests found.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -196,7 +196,7 @@ export default function AdminPage() {
               return (
                 <div
                   key={req._id}
-                  className="bg-white/[0.03] border border-white/10 rounded-[24px] p-6 flex flex-col gap-4 hover:bg-white/[0.05] transition-colors"
+                  className="bg-surface/[0.03] border border-white/10 rounded-[24px] p-6 flex flex-col gap-4 hover:bg-surface/[0.05] transition-colors"
                 >
                   {/* Header */}
                   <div className="flex justify-between items-start">
@@ -204,17 +204,17 @@ export default function AdminPage() {
                       <h3 className="text-lg font-black font-display tracking-tight">
                         {req.certificateDetails?.title || 'Certificate'}
                       </h3>
-                      <p className="text-sm text-white/40 mt-0.5">
+                      <p className="text-sm text-background/40 mt-0.5">
                         To: {req.certificateDetails?.studentName}
                       </p>
                     </div>
-                    <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest border ${STATUS_COLORS[req.status] || 'bg-white/5 text-white/40 border-white/10'}`}>
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest border ${STATUS_COLORS[req.status] || 'bg-surface/5 text-background/40 border-white/10'}`}>
                       {req.status}
                     </span>
                   </div>
 
                   {/* Details */}
-                  <div className="text-sm bg-white/5 rounded-xl p-4 space-y-2">
+                  <div className="text-sm bg-surface/5 rounded-xl p-4 space-y-2">
                     {[
                       ['Type', req.certificateDetails?.certificateType],
                       ['Course', req.certificateDetails?.course],
@@ -223,8 +223,8 @@ export default function AdminPage() {
                       ['Student', req.userWallet ? `${req.userWallet.slice(0, 8)}...${req.userWallet.slice(-6)}` : '—'],
                     ].map(([label, val]) => (
                       <div className="flex justify-between" key={label}>
-                        <span className="text-white/30 font-bold">{label}</span>
-                        <span className="text-white/70 font-medium">{val || '—'}</span>
+                        <span className="text-background/30 font-bold">{label}</span>
+                        <span className="text-background/70 font-medium">{val || '—'}</span>
                       </div>
                     ))}
                   </div>
@@ -263,7 +263,7 @@ export default function AdminPage() {
                     <button
                       disabled={!!busy}
                       onClick={() => handleMint(req)}
-                      className="w-full flex items-center justify-center gap-2 py-4 rounded-xl font-bold text-white disabled:opacity-50 transition-all"
+                      className="w-full flex items-center justify-center gap-2 py-4 rounded-xl font-bold text-background disabled:opacity-50 transition-all"
                       style={{ background: 'linear-gradient(135deg, #FF8DA1, #e05c7a)' }}
                     >
                       {isBusyMint ? (

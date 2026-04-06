@@ -178,8 +178,8 @@ export function FeaturesBento() {
       const lightTl = gsap.timeline({
         scrollTrigger: {
           trigger: sectionRef.current,
-          start: 'top 70%', // Start when "Built Different" scrolls in
-          end: 'top 20%',
+          start: 'top 100%', // Start as soon as the section enters from the bottom
+          end: 'top 60%',    // Finish early so the Built Different text is completely readable
           scrub: 1,
         },
       });

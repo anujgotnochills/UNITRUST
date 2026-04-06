@@ -33,7 +33,7 @@ export function FloatingSidebar() {
         isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-12'
       }`}
     >
-      <div className="bg-white rounded-full flex flex-col items-center py-4 px-2 gap-5 shadow-lg border border-black/5">
+      <div className="bg-surface rounded-full flex flex-col items-center py-4 px-2 gap-5 shadow-lg border border-white/10">
         <button
           onClick={scrollToTop}
           className="text-gray-400 hover:text-black transition-colors"

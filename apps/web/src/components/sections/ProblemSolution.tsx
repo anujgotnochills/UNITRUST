@@ -47,7 +47,7 @@ export function ProblemSolution() {
                   <AlertTriangle className="w-3.5 h-3.5 text-red-400" />
                   <span className="text-xs font-medium text-red-400 uppercase tracking-wider">The Problem</span>
                 </div>
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-black tracking-tight text-[#1A1A1A]">
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-black tracking-tight text-foreground">
                   Trust is <span className="text-red-400">Broken</span>
                 </h2>
                 <p className="text-lg text-muted leading-relaxed max-w-lg">
@@ -83,10 +83,10 @@ export function ProblemSolution() {
             <div className="grid lg:grid-cols-2 gap-12 items-center w-full">
               <div className="space-y-6">
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-accent-green/10 border border-accent-green/20">
-                  <CheckCircle className="w-3.5 h-3.5 text-[#1A1A1A]" />
-                  <span className="text-xs font-medium text-[#1A1A1A] uppercase tracking-wider">Our Solution</span>
+                  <CheckCircle className="w-3.5 h-3.5 text-foreground" />
+                  <span className="text-xs font-medium text-foreground uppercase tracking-wider">Our Solution</span>
                 </div>
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-black tracking-tight text-[#1A1A1A]">
+                <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-black tracking-tight text-foreground">
                   Trust, Verified
                 </h2>
                 <p className="text-lg text-muted leading-relaxed max-w-lg">
@@ -105,19 +105,19 @@ export function ProblemSolution() {
               </div>
               <div className="hidden lg:flex justify-center">
                 <div className="w-80 h-80 rounded-2xl bg-surface border border-accent-green/20 flex flex-col items-center justify-center gap-6 p-8 glow-green">
-                  <ShieldCheck className="w-16 h-16 text-[#1A1A1A]/60" />
+                  <ShieldCheck className="w-16 h-16 text-foreground/60" />
                   <div className="space-y-3 text-center w-full">
                     <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent-green/5 border border-accent-green/10">
                       <div className="w-2 h-2 rounded-full bg-accent-green" />
-                      <span className="text-xs text-[#1A1A1A]/80">Asset verified</span>
+                      <span className="text-xs text-foreground/80">Asset verified</span>
                     </div>
                     <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent-green/5 border border-accent-green/10">
                       <div className="w-2 h-2 rounded-full bg-accent-green" />
-                      <span className="text-xs text-[#1A1A1A]/80">Certificate issued</span>
+                      <span className="text-xs text-foreground/80">Certificate issued</span>
                     </div>
                     <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-accent-green/5 border border-accent-green/10">
                       <div className="w-2 h-2 rounded-full bg-accent-green" />
-                      <span className="text-xs text-[#1A1A1A]/80">Carbon tracked</span>
+                      <span className="text-xs text-foreground/80">Carbon tracked</span>
                     </div>
                   </div>
                 </div>

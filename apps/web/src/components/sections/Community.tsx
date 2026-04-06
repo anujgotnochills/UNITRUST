@@ -17,7 +17,7 @@ const avatarColors = [
 ];
 
 const socials = [
-  { label: 'Twitter / X', icon: '𝕏', color: 'hover:bg-white/20 hover:text-white', href: '#' },
+  { label: 'Twitter / X', icon: '𝕏', color: 'hover:bg-surface/20 hover:text-background', href: '#' },
   { label: 'Telegram', icon: '✈', color: 'hover:bg-[#229ED9]/20 hover:text-[#229ED9]', href: '#' },
   { label: 'Discord', icon: '🎮', color: 'hover:bg-[#5865F2]/20 hover:text-[#5865F2]', href: '#' },
 ];
@@ -77,7 +77,7 @@ export function Community() {
               {avatarColors.map((gradient, i) => (
                 <div
                   key={i}
-                  className={`w-10 h-10 rounded-full bg-gradient-to-br ${gradient} border-2 border-background flex items-center justify-center text-xs font-bold text-white shadow-lg`}
+                  className={`w-10 h-10 rounded-full bg-gradient-to-br ${gradient} border-2 border-background flex items-center justify-center text-xs font-bold text-background shadow-lg`}
                   style={{ zIndex: avatarColors.length - i }}
                 >
                   {String.fromCharCode(65 + i)}
@@ -89,7 +89,7 @@ export function Community() {
             </div>
           </div>
 
-          <h2 className="text-section font-display font-black text-[#1A1A1A] tracking-tight mb-4">
+          <h2 className="text-section font-display font-black text-foreground tracking-tight mb-4">
             Join <AnimatedCounter target={270} suffix="k+" /> Builders
           </h2>
           <p className="text-lg text-muted leading-relaxed mb-10 max-w-lg mx-auto">
@@ -105,7 +105,7 @@ export function Community() {
               { label: 'Countries', value: 89, suffix: '' },
             ].map((stat) => (
               <div key={stat.label}>
-                <div className="text-2xl md:text-3xl font-display font-black text-[#1A1A1A]">
+                <div className="text-2xl md:text-3xl font-display font-black text-foreground">
                   <AnimatedCounter target={stat.value} suffix={stat.suffix} />
                 </div>
                 <div className="text-xs text-muted mt-1">{stat.label}</div>

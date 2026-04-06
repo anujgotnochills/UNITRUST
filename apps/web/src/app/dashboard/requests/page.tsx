@@ -42,17 +42,17 @@ export default function MyRequestsPage() {
     <div className="space-y-8">
       <div className="flex justify-between items-end">
         <div>
-          <h2 className="text-4xl font-display font-black text-[#1A1A1A] tracking-tight">My Requests</h2>
+          <h2 className="text-4xl font-display font-black text-foreground tracking-tight">My Requests</h2>
           <p className="text-muted mt-2 text-lg">Track all your outgoing certificate and verification requests.</p>
         </div>
       </div>
 
       {isLoading ? (
-        <div className="bg-white rounded-[32px] border border-black/[0.05] shadow-sm p-24 flex items-center justify-center">
-          <div className="w-8 h-8 rounded-full border-4 border-black/10 border-t-accent-pink animate-spin" />
+        <div className="bg-surface rounded-[32px] border border-black/[0.05] shadow-sm p-24 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-full border-4 border-white/20 border-t-accent-pink animate-spin" />
         </div>
       ) : requests.length === 0 ? (
-        <div className="bg-white rounded-[32px] border border-black/[0.05] shadow-sm p-32 text-center">
+        <div className="bg-surface rounded-[32px] border border-black/[0.05] shadow-sm p-32 text-center">
           <div className="max-w-xs mx-auto space-y-4">
             <p className="text-muted text-lg font-medium">No active requests found.</p>
           </div>
@@ -60,7 +60,7 @@ export default function MyRequestsPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {requests.map((req: any) => (
-            <div key={req._id} className="bg-white rounded-[24px] border border-black/[0.05] shadow-sm p-6 flex flex-col gap-4">
+            <div key={req._id} className="bg-surface rounded-[24px] border border-black/[0.05] shadow-sm p-6 flex flex-col gap-4">
                <div className="flex justify-between items-start">
                   <div>
                      <h3 className="text-lg font-black font-display tracking-tight">{req.certificateDetails?.title || 'Certificate'}</h3>

@@ -27,11 +27,11 @@ export function Button({
     primary:
       'bg-accent-green text-black hover:shadow-[0_0_30px_rgba(0,255,136,0.3)] hover:-translate-y-0.5 active:translate-y-0',
     secondary:
-      'bg-white/10 text-white hover:bg-white/15 hover:-translate-y-0.5 border border-white/10',
+      'bg-surface/10 text-background hover:bg-surface/15 hover:-translate-y-0.5 border border-white/10',
     outline:
-      'bg-transparent text-white border border-white/20 hover:border-white/40 hover:bg-white/5 hover:-translate-y-0.5',
+      'bg-transparent text-background border border-white/20 hover:border-white/40 hover:bg-surface/5 hover:-translate-y-0.5',
     ghost:
-      'bg-transparent text-muted hover:text-white hover:bg-white/5',
+      'bg-transparent text-muted hover:text-background hover:bg-surface/5',
   };
 
   const sizes = {
