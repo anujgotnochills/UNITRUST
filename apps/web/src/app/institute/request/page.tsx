@@ -192,7 +192,7 @@ export default function InstituteRequestPage() {
           </div>
 
           {/* Tab switcher */}
-          <div className="flex gap-2 bg-surface rounded-xl p-1 border border-black/[0.06] w-fit">
+          <div className="flex gap-2 bg-surface rounded-xl p-1 border border-black/[0.06] w-fit mx-auto">
             <button
               onClick={() => setActiveTab('new')}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold transition-all ${
@@ -224,7 +224,7 @@ export default function InstituteRequestPage() {
 
           {/* New Request Form */}
           {activeTab === 'new' && (
-            <div className="bg-surface rounded-[32px] border border-black/[0.1] shadow-xl p-10 max-w-2xl">
+            <div className="bg-surface rounded-[32px] border border-black/[0.1] shadow-xl p-10 max-w-2xl mx-auto">
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
                   <label className="block text-sm font-bold text-foreground uppercase tracking-widest px-1">Student Wallet Address</label>
