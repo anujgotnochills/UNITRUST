@@ -28,7 +28,7 @@ function getAttr(attrs: any[], key: string) {
 // ─── Status badge config ──────────────────────────────────────────
 const STATUS_CONFIG: Record<string, { label: string; bg: string; text: string; icon: any }> = {
   accepted: {
-    label: 'Approved • Minting Soon',
+    label: 'Awaiting Issuance',
     bg: 'bg-blue-100',
     text: 'text-blue-700',
     icon: Clock,
@@ -225,7 +225,7 @@ export default function MyCertificatesPage() {
                       ['Type', certType],
                       ['Course', course],
                       ['Issued', issueDate],
-                      ['Token', req.tokenId != null ? `#${req.tokenId}` : (isAccepted ? 'Minting…' : 'Pending')],
+                      ['Token', req.tokenId != null ? `#${req.tokenId}` : (isAccepted ? 'Awaiting…' : 'Pending')],
                     ].map(([label, val]) => (
                       <div key={label} className="bg-black/[0.03] p-3 rounded-xl">
                         <p className="text-xs font-bold text-muted uppercase tracking-widest mb-1">{label}</p>
@@ -260,7 +260,7 @@ export default function MyCertificatesPage() {
                       <div>
                         <p className="text-sm font-bold text-blue-800">Certificate Approved ✓</p>
                         <p className="text-xs text-blue-600 mt-0.5">
-                          The institute has approved your certificate. It will be minted as an NFT on Polygon shortly.
+                          Your certificate is approved. The institute will issue the NFT from their portal.
                         </p>
                       </div>
                     </div>

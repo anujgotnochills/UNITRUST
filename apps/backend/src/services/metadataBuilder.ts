@@ -31,6 +31,7 @@ export function buildAssetMetadata(params: {
  */
 export function buildCertificateMetadata(params: {
   title: string;
+  description?: string;
   studentName: string;
   course: string;
   issueDate: string;
@@ -45,7 +46,7 @@ export function buildCertificateMetadata(params: {
 }): Record<string, any> {
   const metadata: Record<string, any> = {
     name: params.title,
-    description: `Certificate: ${params.title} awarded to ${params.studentName} by ${params.instituteName}`,
+    description: params.description || `Certificate: ${params.title} awarded to ${params.studentName} by ${params.instituteName}`,
     image: params.instituteLogo,
     attributes: [
       { trait_type: 'Student Name', value: params.studentName },
