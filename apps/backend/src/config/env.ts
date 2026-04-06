@@ -10,5 +10,6 @@ export const env = {
   PRODUCT_NFT_ADDRESS: process.env.PRODUCT_NFT_ADDRESS || '',
   CERTIFICATE_NFT_ADDRESS: process.env.CERTIFICATE_NFT_ADDRESS || '',
   ALCHEMY_RPC: process.env.ALCHEMY_RPC || '',
-  ALLOWED_ORIGIN: process.env.ALLOWED_ORIGIN || 'http://localhost:3000',
+  ALLOWED_ORIGIN: process.env.ALLOWED_ORIGIN || 'http://localhost:3001',
+  BACKEND_PRIVATE_KEY: process.env.BACKEND_PRIVATE_KEY || '',
 };

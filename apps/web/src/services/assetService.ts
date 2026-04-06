@@ -1,4 +1,5 @@
 import { api } from './api';
+import { BACKEND_URL } from '@/lib/constants';
 
 export const assetService = {
   async recordAsset(data: {
@@ -6,8 +7,8 @@ export const assetService = {
     ownerWallet: string;
     metadataURI: string;
     txHash: string;
-    carbonScore?: number;
-    sustainabilityTag?: string;
+    assetName: string;
+    category: string;
   }) {
     const res = await api.post('/assets/record', data);
     return res.data;
@@ -28,3 +29,19 @@ export const assetService = {
     return res.data;
   },
 };
+
+export async function fetchIpfsMetadata(metadataURI: string): Promise<any> {
+  if (!metadataURI) return null;
+  try {
+    const url = metadataURI.startsWith('ipfs://')
+      ? `${BACKEND_URL.replace('/api', '')}/api/ipfs/gateway?cid=${metadataURI.replace('ipfs://', '')}`
+      : metadataURI;
+    // Try Pinata gateway directly
+    const pinataUrl = metadataURI.replace('ipfs://', 'https://gateway.pinata.cloud/ipfs/');
+    const res = await fetch(pinataUrl);
+    if (!res.ok) return null;
+    return res.json();
+  } catch {
+    return null;
+  }
+}

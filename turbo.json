@@ -1,12 +1,8 @@
 {
   "$schema": "https://turbo.build/schema.json",
-<<<<<<< Updated upstream
   "globalDependencies": [
     "**/.env.*local"
   ],
-=======
-  "globalDependencies": ["**/.env.*local"],
->>>>>>> Stashed changes
   "tasks": {
     "build": {
       "dependsOn": [
