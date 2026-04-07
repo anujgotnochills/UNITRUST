@@ -96,7 +96,7 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen bg-background dot-grid-bg flex">
       {/* Sidebar */}
-      <aside className="w-64 border-r border-border/10 bg-surface flex flex-col fixed inset-y-0 z-50">
+      <aside className="w-64 border-r border-border/10 bg-surface flex flex-col fixed inset-y-0 z-50" data-lenis-prevent>
         <div className="p-6 border-b border-border/10 flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-foreground flex items-center justify-center">
             <span className="text-background font-bold text-sm font-display">U</span>
@@ -121,8 +121,8 @@ export default function DashboardLayout({
                         <Link
                           key={link.title}
                           href={link.href}
-                          className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                            isActive
+                          className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium dashboard-link ${
+                          isActive
                               ? 'bg-foreground text-background'
                               : 'text-muted hover:text-foreground hover:bg-gray-100'
                           }`}
@@ -138,7 +138,7 @@ export default function DashboardLayout({
                 <div className="space-y-1">
                   <Link
                     href={section.href!}
-                    className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium dashboard-link ${
                       pathname === section.href
                          ? 'bg-foreground text-background'
                          : 'text-muted hover:text-foreground hover:bg-gray-100'
@@ -165,7 +165,7 @@ export default function DashboardLayout({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 ml-64 flex flex-col min-h-screen">
+      <main className="flex-1 ml-64 flex flex-col min-h-screen" data-lenis-prevent>
         {/* Top Navbar */}
         <header className="h-16 border-b border-border/10 bg-surface/50 backdrop-blur-md sticky top-0 z-40 flex items-center justify-between px-8">
           <h1 className="font-display font-black text-xl text-foreground tracking-tight">

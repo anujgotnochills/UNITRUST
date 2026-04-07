@@ -203,3 +203,18 @@ html.lenis, html.lenis body {
 .lenis.lenis-stopped {
   overflow: hidden;
 }
+
+/* Ensure dashboard interactive elements respond instantly */
+[data-lenis-prevent] a,
+[data-lenis-prevent] button,
+[data-lenis-prevent] input,
+[data-lenis-prevent] select,
+[data-lenis-prevent] textarea {
+  touch-action: auto;
+  pointer-events: auto;
+}
+
+/* Remove transition delay on all nav links for snappy response */
+.dashboard-link {
+  transition: background-color 80ms ease, color 80ms ease !important;
+}
