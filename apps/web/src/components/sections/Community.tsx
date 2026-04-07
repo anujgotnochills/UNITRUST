@@ -62,7 +62,7 @@ export function Community() {
         <div className="community-content text-center max-w-2xl mx-auto">
 
           <h2 className="text-section font-display font-black text-foreground tracking-tight mb-4">
-            Built from scratch in <AnimatedCounter target={48} suffix="h" /> 
+            Built from scratch in <AnimatedCounter target={24} suffix="h" /> 
           </h2>
           <p className="text-lg text-muted leading-relaxed mb-10 max-w-lg mx-auto">
             We're a passionate startup born out of this hackathon. Join our early community of supporters as we pioneer the future of decentralized trust and asset tokenization.

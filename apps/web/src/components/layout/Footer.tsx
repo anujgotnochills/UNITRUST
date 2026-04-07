@@ -80,12 +80,13 @@ export function Footer() {
           {/* Brand column */}
           <div className="col-span-2 md:col-span-3 lg:col-span-1 mb-4 lg:mb-0">
             <a href="/" className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent-green to-accent-blue flex items-center justify-center">
-                <span className="text-black font-bold text-sm font-display">U</span>
-              </div>
-              <span className="text-xl font-display font-black tracking-tight text-white">
-                UniTrust
-              </span>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/unitrust-logo.svg"
+                alt="UniTrust"
+                className="h-10 w-auto text-foreground"
+                style={{ filter: 'invert(0)' }}
+              />
             </a>
             <p className="text-sm text-muted leading-relaxed max-w-[240px]">
               Decentralized trust infrastructure for the real world.
