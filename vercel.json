@@ -1,19 +1,20 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
-  "installCommand": "cd ../.. && pnpm install",
-  "buildCommand": "cd ../.. && pnpm --filter unitrust-web build",
-  "outputDirectory": ".next",
+  "buildCommand": "pnpm --filter unitrust-web build",
+  "outputDirectory": "apps/web/.next",
+  "installCommand": "pnpm install",
   "framework": "nextjs",
+  "rootDirectory": ".",
   "rewrites": [
     {
-      "source": "/api/backend/(.*)",
+      "source": "/api/(.*)",
       "destination": "https://unitrust-backend.vercel.app/api/$1"
     }
   ],
   "headers": [
     {
-      "source": "/api/backend/(.*)",
+      "source": "/api/(.*)",
       "headers": [
         { "key": "Access-Control-Allow-Credentials", "value": "true" },
         { "key": "Access-Control-Allow-Origin", "value": "*" },
@@ -21,5 +22,8 @@
         { "key": "Access-Control-Allow-Headers", "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version" }
       ]
     }
-  ]
+  ],
+  "env": {
+    "NEXT_PUBLIC_API_URL": "https://unitrust-backend.vercel.app"
+  }
 }
