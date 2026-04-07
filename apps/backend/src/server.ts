@@ -16,22 +16,9 @@ import hiddenRoutes from './routes/hidden';
 const app: Express = express();
 
 // Middleware — CORS
-const allowedOrigins = [
-  'http://localhost:3000',
-  'http://localhost:3001',
-  ...(env.ALLOWED_ORIGIN ? env.ALLOWED_ORIGIN.split(',').map((s) => s.trim()) : []),
-];
 app.use(
   cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (mobile apps, curl, Postman)
-      if (!origin) return callback(null, true);
-      // Allow any vercel.app subdomain (for preview deployments)
-      if (origin.endsWith('.vercel.app') || allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-      return callback(new Error(`CORS blocked: ${origin}`));
-    },
+    origin: '*',
     credentials: true,
   })
 );
