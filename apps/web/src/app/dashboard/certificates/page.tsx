@@ -191,7 +191,7 @@ export default function MyCertificatesPage() {
 
             return (
               <div key={`req-${req._id}`} className="group perspective-1000 hover:z-10 h-full">
-                <div className="relative w-full h-full preserve-3d transition-transform duration-700 will-change-transform group-hover:rotate-y-180">
+                <div className="relative w-full h-full preserve-3d transition-transform duration-300 will-change-transform group-hover:rotate-y-180">
 
                   {/* FRONT SIDE */}
                   <div className="relative backface-hidden shining-card bg-surface rounded-[24px] border border-black/[0.05] shadow-sm flex flex-col overflow-hidden h-full">
@@ -329,7 +329,7 @@ export default function MyCertificatesPage() {
                               e.preventDefault();
                               downloadQR(`qr-cert-${req.tokenId}`, `Certificate-${req.tokenId}`);
                             }}
-                            className="flex items-center justify-center gap-1.5 mx-auto mt-2 px-4 py-2 bg-foreground text-background rounded-full text-xs font-bold hover:scale-105 active:scale-95 transition-all"
+                            className="flex items-center justify-center gap-1.5 mx-auto mt-2 px-4 py-2 bg-foreground text-background rounded-full text-xs font-bold hover:scale-105 active:scale-95 transition-transform"
                           >
                             <Download className="w-3.5 h-3.5" />
                             Save QR
@@ -373,7 +373,7 @@ export default function MyCertificatesPage() {
 
               return (
                 <div key={`nft-${cert.tokenId}`} className="group perspective-1000 hover:z-10 h-full">
-                  <div className="relative w-full h-full preserve-3d transition-transform duration-700 will-change-transform group-hover:rotate-y-180">
+                  <div className="relative w-full h-full preserve-3d transition-transform duration-300 will-change-transform group-hover:rotate-y-180">
 
                     {/* FRONT SIDE */}
                     <div className="relative backface-hidden shining-card bg-surface rounded-[24px] border border-black/[0.05] shadow-sm flex flex-col overflow-hidden h-full">
@@ -455,7 +455,7 @@ export default function MyCertificatesPage() {
                             e.preventDefault();
                             downloadQR(`qr-cert-${cert.tokenId}`, `Certificate-${cert.tokenId}`);
                           }}
-                          className="flex items-center justify-center gap-1.5 mx-auto mt-2 px-4 py-2 bg-foreground text-background rounded-full text-xs font-bold hover:scale-105 active:scale-95 transition-all"
+                          className="flex items-center justify-center gap-1.5 mx-auto mt-2 px-4 py-2 bg-foreground text-background rounded-full text-xs font-bold hover:scale-105 active:scale-95 transition-transform"
                         >
                           <Download className="w-3.5 h-3.5" />
                           Save QR

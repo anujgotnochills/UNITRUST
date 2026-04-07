@@ -118,7 +118,7 @@ export default function MyAssetsPage() {
 
             return (
               <div key={asset.tokenId} className="group perspective-1000 hover:z-10">
-                <div className="relative w-full h-full preserve-3d transition-transform duration-700 will-change-transform group-hover:rotate-y-180">
+                <div className="relative w-full h-full preserve-3d transition-transform duration-300 will-change-transform group-hover:rotate-y-180">
                   
                   {/* Front side */}
                   <div className="relative backface-hidden shining-card bg-surface rounded-[24px] border border-black/[0.05] shadow-sm flex flex-col overflow-hidden h-full">
@@ -173,15 +173,6 @@ export default function MyAssetsPage() {
                         <span className="truncate">{asset.metadataURI}</span>
                       </a>
 
-                      {/* Actions */}
-                      <div className="flex gap-2 mt-auto pt-2 relative z-20">
-                        <button
-                          onClick={() => { setTransferModal({ show: true, tokenId: asset.tokenId }); setTransferTo(''); }}
-                          className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl border-2 border-white/20 text-sm font-bold hover:border-border hover:bg-foreground hover:text-background transition-all bg-surface"
-                        >
-                          <ArrowRightLeft className="w-4 h-4" /> Transfer
-                        </button>
-                      </div>
                     </div>
                   </div>
 
@@ -199,19 +190,32 @@ export default function MyAssetsPage() {
                       />
                     </div>
                     
-                    <div className="text-center relative z-10">
-                      <h3 className="font-black text-lg font-display mb-1">Asset QR</h3>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          e.preventDefault();
-                          downloadQR(`qr-asset-${asset.tokenId}`, `Asset-${asset.tokenId}`);
-                        }}
-                        className="flex items-center justify-center gap-1.5 mx-auto mt-2 px-4 py-2 bg-foreground text-background rounded-full text-xs font-bold hover:scale-105 active:scale-95 transition-all"
-                      >
-                        <Download className="w-3.5 h-3.5" />
-                        Save QR
-                      </button>
+                    <div className="text-center relative z-10 w-full px-6">
+                      <h3 className="font-black text-lg font-display mb-1">Asset Actions</h3>
+                      <div className="flex flex-col gap-2 mx-auto mt-3 w-full max-w-[220px]">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            downloadQR(`qr-asset-${asset.tokenId}`, `Asset-${asset.tokenId}`);
+                          }}
+                          className="flex items-center justify-center gap-1.5 w-full py-2.5 bg-foreground text-background rounded-xl text-sm font-bold hover:scale-105 active:scale-95 transition-transform"
+                        >
+                          <Download className="w-4 h-4" /> Save QR
+                        </button>
+                        
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            setTransferModal({ show: true, tokenId: asset.tokenId }); 
+                            setTransferTo('');
+                          }}
+                          className="flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl border border-black/10 text-sm font-bold hover:bg-black/5 active:scale-95 transition-transform bg-background/50"
+                        >
+                          <ArrowRightLeft className="w-4 h-4" /> Transfer
+                        </button>
+                      </div>
                     </div>
                   </div>
                   

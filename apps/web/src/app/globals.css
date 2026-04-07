@@ -179,14 +179,14 @@
   .shining-card:hover::before {
     animation: shine 1.2s ease-out forwards;
   }
+}
 
-  @keyframes shine {
-    0% {
-      left: -150%;
-    }
-    100% {
-      left: 200%;
-    }
+@keyframes shine {
+  0% {
+    left: -150%;
+  }
+  100% {
+    left: 200%;
   }
 }
 
